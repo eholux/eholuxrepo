@@ -177,6 +177,18 @@ else:
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cloudflare R2 Storage Configuration
+AWS_ACCESS_KEY_ID = os.environ.get('R2_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.environ.get('R2_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('R2_BUCKET_NAME', '')
+AWS_S3_ENDPOINT_URL = os.environ.get('R2_ENDPOINT_URL', '')
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('R2_CUSTOM_DOMAIN', 'media.akusticnipanelieholux.com')
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+
 # In production, use R2 for media
 if not DEBUG and AWS_ACCESS_KEY_ID:
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
@@ -191,18 +203,6 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Cloudflare R2 Storage Configuration
-AWS_ACCESS_KEY_ID = os.environ.get('R2_ACCESS_KEY_ID', '')
-AWS_SECRET_ACCESS_KEY = os.environ.get('R2_SECRET_ACCESS_KEY', '')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('R2_BUCKET_NAME', '')
-AWS_S3_ENDPOINT_URL = os.environ.get('R2_ENDPOINT_URL', '')
-AWS_S3_CUSTOM_DOMAIN = os.environ.get('R2_CUSTOM_DOMAIN', 'media.akusticnipanelieholux.com')
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
 
 # Use R2 for media files in production
 if not DEBUG and AWS_ACCESS_KEY_ID:
