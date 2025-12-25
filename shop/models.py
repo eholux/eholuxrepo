@@ -8,39 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from core.utils import cleanup_orphaned_images, cleanup_all_instance_images
 
 
-class Category(models.Model):
-    name = models.CharField(_('Naziv'), max_length=200, unique=True)
-    slug = models.SlugField(_('Slug'), max_length=200, unique=True, blank=True)
-    created_at = models.DateTimeField(_('Kreirano'), auto_now_add=True)
-    updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
-
-    class Meta:
-        verbose_name = _('Kategorija')
-        verbose_name_plural = _('Kategorije')
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
-
-class ProductAttribute(models.Model):
-    name = models.CharField(_('Naziv atributa'), max_length=200, unique=True)
-    created_at = models.DateTimeField(_('Kreirano'), auto_now_add=True)
-
-    class Meta:
-        verbose_name = _('Atribut proizvoda')
-        verbose_name_plural = _('Atributi proizvoda')
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-
 class ProductImage(models.Model):
     product = models.ForeignKey('Product', related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(_('Slika'), upload_to='products/')
@@ -56,18 +23,40 @@ class ProductImage(models.Model):
         return f"{self.product.title} - Slika {self.order + 1}"
 
 
-class ProductAttributeValue(models.Model):
-    product = models.ForeignKey('Product', related_name='attribute_values', on_delete=models.CASCADE)
-    attribute = models.ForeignKey(ProductAttribute, on_delete=models.CASCADE)
-    value = models.TextField(_('Vrednost'))
+class ProductDimension(models.Model):
+    """Dimensions for a product (length, width, height in centimeters)"""
+    product = models.ForeignKey('Product', related_name='dimensions', on_delete=models.CASCADE)
+    length = models.DecimalField(_('Dužina (cm)'), max_digits=10, decimal_places=2)
+    width = models.DecimalField(_('Širina (cm)'), max_digits=10, decimal_places=2)
+    height = models.DecimalField(_('Visina (cm)'), max_digits=10, decimal_places=2)
+    order = models.PositiveIntegerField(_('Redosled'), default=0)
 
     class Meta:
-        verbose_name = _('Vrednost atributa')
-        verbose_name_plural = _('Vrednosti atributa')
-        unique_together = ['product', 'attribute']
+        verbose_name = _('Dimenzije proizvoda')
+        verbose_name_plural = _('Dimenzije proizvoda')
+        ordering = ['order', 'id']
 
     def __str__(self):
-        return f"{self.product.title} - {self.attribute.name}: {self.value}"
+        return f"{self.product.title} - {self.get_display()}"
+
+    def get_display(self):
+        """Return formatted dimensions string"""
+        return f"{self.length} x {self.width} x {self.height} cm"
+
+
+class ProductPattern(models.Model):
+    """Pattern images for a product"""
+    product = models.ForeignKey('Product', related_name='patterns', on_delete=models.CASCADE)
+    image = models.ImageField(_('Slika uzorka'), upload_to='products/patterns/')
+    order = models.PositiveIntegerField(_('Redosled'), default=0)
+
+    class Meta:
+        verbose_name = _('Uzorak proizvoda')
+        verbose_name_plural = _('Uzorci proizvoda')
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"{self.product.title} - Uzorak {self.order + 1}"
 
 
 class Product(models.Model):
@@ -76,7 +65,6 @@ class Product(models.Model):
         ('limited', _('Ograničena količina')),
     ]
 
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.SET_NULL, null=True, blank=True)
     slug = models.SlugField(_('Slug'), max_length=200, unique=True)
     meta_title = models.CharField(_('Meta naslov'), max_length=200)
     meta_description = models.TextField(_('Meta opis'), max_length=300)
@@ -168,6 +156,14 @@ def product_delete_handler(sender, instance, **kwargs):
 @receiver(post_delete, sender=ProductImage)
 def product_image_delete_handler(sender, instance, **kwargs):
     """Clean up image file when ProductImage is deleted"""
+    from core.utils import delete_file_from_storage
+    if instance.image:
+        delete_file_from_storage(instance.image.name)
+
+
+@receiver(post_delete, sender=ProductPattern)
+def product_pattern_delete_handler(sender, instance, **kwargs):
+    """Clean up image file when ProductPattern is deleted"""
     from core.utils import delete_file_from_storage
     if instance.image:
         delete_file_from_storage(instance.image.name)

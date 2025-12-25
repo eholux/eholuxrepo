@@ -85,14 +85,31 @@
                     <div class="full-description">{{ product.full_description|safe }}</div>
                 </div>
 
-                {% if product.attribute_values.all %}
-                    <div class="product-attributes">
-                        <h3>Specifikacije</h3>
-                        {% for attr_value in product.attribute_values.all %}
-                            <div class="attribute-item">
-                                <strong>{{ attr_value.attribute.name }}:</strong> {{ attr_value.value }}
-                            </div>
-                        {% endfor %}
+                {% if product.dimensions.exists %}
+                    <div class="product-dimensions">
+                        <h3>Dimenzije</h3>
+                        <label for="dimension-select">Izaberite dimenzije:</label>
+                        <select id="dimension-select" name="dimension_id" required>
+                            <option value="">-- Izaberite dimenzije --</option>
+                            {% for dimension in product.dimensions.all %}
+                                <option value="{{ dimension.id }}">{{ dimension.get_display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+
+                {% if product.patterns.exists %}
+                    <div class="product-patterns">
+                        <h3>Uzorci</h3>
+                        <label for="pattern-select">Izaberite uzorak:</label>
+                        <select id="pattern-select" name="pattern_id" required>
+                            <option value="">-- Izaberite uzorak --</option>
+                            {% for pattern in product.patterns.all %}
+                                <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">Uzorak {{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
+                        <div style="margin-top: 10px;"><strong>Izabrani uzorak:</strong></div>
+                        <div class="pattern-preview" id="pattern-preview"></div>
                     </div>
                 {% endif %}
 
@@ -115,6 +132,8 @@
                             <label for="quantity">Količina:</label>
                             <input type="number" id="quantity" name="quantity" value="1" min="1" {% if product.stock_type == 'limited' %}max="{{ product.stock_quantity }}"{% endif %}>
                         </div>
+                        <input type="hidden" id="dimension-input" name="dimension_id" value="">
+                        <input type="hidden" id="pattern-input" name="pattern_id" value="">
                         <button type="submit" class="btn btn-primary">Dodaj u korpu</button>
                     </form>
                 {% endif %}
@@ -373,6 +392,101 @@ function initProductCarousel() {
 document.addEventListener('DOMContentLoaded', function() {
     if (productImages.length > 0) {
         initProductCarousel();
+    }
+    
+    // Handle dimension and pattern selection
+    const dimensionSelect = document.getElementById('dimension-select');
+    const patternSelect = document.getElementById('pattern-select');
+    const dimensionInput = document.getElementById('dimension-input');
+    const patternInput = document.getElementById('pattern-input');
+    const patternPreview = document.getElementById('pattern-preview');
+    const addToCartForm = document.querySelector('.add-to-cart-form');
+    
+    if (dimensionSelect && dimensionInput) {
+        dimensionSelect.addEventListener('change', function() {
+            dimensionInput.value = this.value;
+        });
+        // Set initial value
+        dimensionInput.value = dimensionSelect.value;
+    }
+    
+    if (patternSelect && patternInput) {
+        patternSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            patternInput.value = this.value;
+            
+            // Show pattern preview
+            if (patternPreview) {
+                if (this.value && selectedOption.dataset.image) {
+                    patternPreview.innerHTML = `<img src="${selectedOption.dataset.image}" alt="${selectedOption.text}" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">`;
+                } else {
+                    patternPreview.innerHTML = '';
+                }
+            }
+        });
+        // Set initial value
+        patternInput.value = patternSelect.value;
+        // Trigger change to show preview if value exists
+        if (patternSelect.value) {
+            patternSelect.dispatchEvent(new Event('change'));
+        }
+    }
+    
+    // Update form submission to include dimension and pattern
+    if (addToCartForm) {
+        addToCartForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = this.dataset.productId;
+            const quantity = document.getElementById('quantity').value;
+            const dimensionId = dimensionInput ? dimensionInput.value : '';
+            const patternId = patternInput ? patternInput.value : '';
+            
+            // Validate required fields
+            if (dimensionSelect && !dimensionId) {
+                alert('Molimo izaberite dimenzije.');
+                dimensionSelect.focus();
+                return;
+            }
+            if (patternSelect && !patternId) {
+                alert('Molimo izaberite uzorak.');
+                patternSelect.focus();
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('quantity', quantity);
+            formData.append('dimension_id', dimensionId);
+            formData.append('pattern_id', patternId);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            fetch(`/prodavnica/dodaj-u-korpu/${productId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Update cart count if needed
+                    if (data.cart_count !== undefined) {
+                        const cartCountEl = document.querySelector('.cart-count');
+                        if (cartCountEl) {
+                            cartCountEl.textContent = data.cart_count;
+                        }
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Došlo je do greške. Molimo pokušajte ponovo.');
+            });
+        });
     }
 });
 </script>

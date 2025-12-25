@@ -8,6 +8,7 @@ class UserEmail(models.Model):
     source = models.CharField(_('Izvor'), max_length=50, choices=[
         ('contact', _('Kontakt forma')),
         ('registration', _('Registracija')),
+        ('checkout', _('Porudžbina')),
     ])
     created_at = models.DateTimeField(_('Kreirano'), auto_now_add=True)
 

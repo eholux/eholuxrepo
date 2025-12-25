@@ -17,9 +17,9 @@ class UserAdmin(BaseUserAdmin):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 1
-    fields = ('product', 'quantity', 'price', 'get_subtotal')
-    readonly_fields = ('get_subtotal',)
+    extra = 0
+    fields = ('product', 'quantity', 'price', 'get_dimension_display', 'get_pattern_display', 'get_subtotal')
+    readonly_fields = ('get_subtotal', 'get_dimension_display', 'get_pattern_display')
     can_delete = True
 
     def get_subtotal(self, obj):
@@ -27,6 +27,19 @@ class OrderItemInline(admin.TabularInline):
             return f"{obj.subtotal:.2f} RSD"
         return "-"
     get_subtotal.short_description = _('Ukupno')
+    
+    def get_dimension_display(self, obj):
+        if obj and obj.selected_dimension:
+            return obj.selected_dimension.get_display()
+        return "-"
+    get_dimension_display.short_description = _('Dimenzije')
+    
+    def get_pattern_display(self, obj):
+        if obj and obj.selected_pattern:
+            from django.utils.html import format_html
+            return format_html('<img src="{}" style="max-width: 100px; border: 1px solid #ddd; border-radius: 4px;">', obj.selected_pattern.image.url)
+        return "-"
+    get_pattern_display.short_description = _('Uzorak')
 
 
 @admin.register(Order)

@@ -8,15 +8,6 @@
     <div class="container">
         <h1>Prodavnica</h1>
         
-        <div class="shop-filters">
-            <div class="categories-filter">
-                <a href="{% url 'shop:shop' %}" class="category-link {% if not selected_category %}active{% endif %}">Svi proizvodi</a>
-                {% for cat in categories %}
-                    <a href="{% url 'shop:shop' %}?category={{ cat.slug }}" class="category-link {% if selected_category == cat %}active{% endif %}">{{ cat.name }}</a>
-                {% endfor %}
-            </div>
-        </div>
-
         <div class="products-grid">
             {% for product in products %}
                 <div class="product-card">

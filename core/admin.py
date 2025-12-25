@@ -10,17 +10,30 @@ class UserEmailAdmin(admin.ModelAdmin):
     list_display = ('email', 'source', 'created_at')
     list_filter = ('source', 'created_at')
     search_fields = ('email',)
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_all_as_csv']
+    date_hierarchy = 'created_at'
 
     def export_as_csv(self, request, queryset):
+        """Export selected emails to CSV"""
         response = HttpResponse(content_type='text/csv; charset=utf-8')
-        response['Content-Disposition'] = 'attachment; filename="emails.csv"'
+        response['Content-Disposition'] = 'attachment; filename="emails_selected.csv"'
         writer = csv.writer(response)
         writer.writerow(['Email', 'Izvor', 'Kreirano'])
         for email in queryset:
             writer.writerow([email.email, email.get_source_display(), email.created_at.strftime('%Y-%m-%d %H:%M:%S')])
         return response
     export_as_csv.short_description = _('Izvezi izabrane emailove u CSV')
+    
+    def export_all_as_csv(self, request, queryset):
+        """Export all emails to CSV"""
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="emails_all.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Email', 'Izvor', 'Kreirano'])
+        for email in UserEmail.objects.all().order_by('-created_at'):
+            writer.writerow([email.email, email.get_source_display(), email.created_at.strftime('%Y-%m-%d %H:%M:%S')])
+        return response
+    export_all_as_csv.short_description = _('Izvezi sve emailove u CSV')
 
 
 @admin.register(CkeditorUpload)

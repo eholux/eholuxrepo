@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from .models import Category, ProductAttribute, Product, ProductImage, ProductAttributeValue
+from .models import Product, ProductImage, ProductDimension, ProductPattern
 
 
 class ProductImageInline(admin.TabularInline):
@@ -11,35 +11,42 @@ class ProductImageInline(admin.TabularInline):
     fields = ('image', 'alt_text', 'order')
 
 
-class ProductAttributeValueInline(admin.TabularInline):
-    model = ProductAttributeValue
+class ProductDimensionInline(admin.TabularInline):
+    model = ProductDimension
     extra = 1
-    fields = ('attribute', 'value')
+    fields = ('length', 'width', 'height', 'order')
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'created_at')
-    prepopulated_fields = {'slug': ('name',)}
-    search_fields = ('name',)
+class ProductPatternInline(admin.TabularInline):
+    model = ProductPattern
+    extra = 1
+    fields = ('image', 'order')
 
 
-@admin.register(ProductAttribute)
-class ProductAttributeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
-    search_fields = ('name',)
+@admin.register(ProductDimension)
+class ProductDimensionAdmin(admin.ModelAdmin):
+    list_display = ('product', 'length', 'width', 'height', 'order')
+    list_filter = ('product',)
+    search_fields = ('product__title',)
+
+
+@admin.register(ProductPattern)
+class ProductPatternAdmin(admin.ModelAdmin):
+    list_display = ('product', 'image', 'order')
+    list_filter = ('product',)
+    search_fields = ('product__title',)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'sku', 'category', 'current_price', 'stock_status', 'is_active', 'created_at')
-    list_filter = ('category', 'stock_type', 'is_active', 'created_at')
+    list_display = ('title', 'sku', 'current_price', 'stock_status', 'is_active', 'created_at')
+    list_filter = ('stock_type', 'is_active', 'created_at')
     search_fields = ('title', 'sku', 'short_description')
     prepopulated_fields = {'slug': ('title',)}
-    inlines = [ProductImageInline, ProductAttributeValueInline]
+    inlines = [ProductImageInline, ProductDimensionInline, ProductPatternInline]
     fieldsets = (
         (_('Osnovne informacije'), {
-            'fields': ('title', 'slug', 'category', 'sku')
+            'fields': ('title', 'slug', 'sku')
         }),
         (_('SEO'), {
             'fields': ('meta_title', 'meta_description')
