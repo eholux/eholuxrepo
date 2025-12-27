@@ -211,16 +211,23 @@ setTimeout(() => {
     });
 }, 5000);
 
-// Cart Dropdown
+// Cart Dropdown - Works for both desktop and mobile
 const cartIconBtn = document.getElementById('cartIconBtn');
 const cartDropdown = document.getElementById('cartDropdown');
+const cartIconBtnMobile = document.getElementById('cartIconBtnMobile');
+const cartDropdownMobile = document.getElementById('cartDropdownMobile');
 
-function loadCartDropdown() {
+function loadCartDropdown(isMobile = false) {
+    const itemsContainerId = isMobile ? 'cartDropdownItemsMobile' : 'cartDropdownItems';
+    const totalElementId = isMobile ? 'cartDropdownTotalMobile' : 'cartDropdownTotal';
+    
     fetch('/prodavnica/korpa-dropdown/')
         .then(response => response.json())
         .then(data => {
-            const itemsContainer = document.getElementById('cartDropdownItems');
-            const totalElement = document.getElementById('cartDropdownTotal');
+            const itemsContainer = document.getElementById(itemsContainerId);
+            const totalElement = document.getElementById(totalElementId);
+            
+            if (!itemsContainer || !totalElement) return;
             
             if (data.items && data.items.length > 0) {
                 itemsContainer.innerHTML = data.items.map(item => `
@@ -245,22 +252,43 @@ function loadCartDropdown() {
         });
 }
 
+// Desktop cart dropdown
 if (cartIconBtn && cartDropdown) {
     cartIconBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         cartDropdown.classList.toggle('active');
         if (cartDropdown.classList.contains('active')) {
-            loadCartDropdown();
-        }
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!cartIconBtn.contains(e.target) && !cartDropdown.contains(e.target)) {
-            cartDropdown.classList.remove('active');
+            loadCartDropdown(false);
         }
     });
 }
+
+// Mobile cart dropdown
+if (cartIconBtnMobile && cartDropdownMobile) {
+    cartIconBtnMobile.addEventListener('click', function(e) {
+        e.stopPropagation();
+        cartDropdownMobile.classList.toggle('active');
+        if (cartDropdownMobile.classList.contains('active')) {
+            loadCartDropdown(true);
+        }
+    });
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    // Desktop
+    if (cartIconBtn && cartDropdown) {
+        if (!cartIconBtn.contains(e.target) && !cartDropdown.contains(e.target)) {
+            cartDropdown.classList.remove('active');
+        }
+    }
+    // Mobile
+    if (cartIconBtnMobile && cartDropdownMobile) {
+        if (!cartIconBtnMobile.contains(e.target) && !cartDropdownMobile.contains(e.target)) {
+            cartDropdownMobile.classList.remove('active');
+        }
+    }
+});
 
 function removeFromCartDropdown(productId) {
     const formData = new FormData();
@@ -276,28 +304,44 @@ function removeFromCartDropdown(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update cart count
-            const cartCountElement = document.querySelector('.cart-count');
+            // Update cart count for both desktop and mobile
+            const cartCountElements = document.querySelectorAll('.cart-count');
             if (data.cart_count > 0) {
-                if (cartCountElement) {
-                    cartCountElement.textContent = data.cart_count;
+                if (cartCountElements.length > 0) {
+                    cartCountElements.forEach(el => {
+                        el.textContent = data.cart_count;
+                    });
                 } else {
-                    const cartIcon = document.querySelector('.cart-icon');
-                    if (cartIcon) {
+                    // Add cart count to desktop cart icon
+                    const cartIcon = document.querySelector('#cartIconBtn');
+                    if (cartIcon && !cartIcon.querySelector('.cart-count')) {
                         const countSpan = document.createElement('span');
                         countSpan.className = 'cart-count';
                         countSpan.textContent = data.cart_count;
                         cartIcon.appendChild(countSpan);
                     }
+                    // Add cart count to mobile cart icon
+                    const cartIconMobile = document.querySelector('#cartIconBtnMobile');
+                    if (cartIconMobile && !cartIconMobile.querySelector('.cart-count')) {
+                        const countSpan = document.createElement('span');
+                        countSpan.className = 'cart-count';
+                        countSpan.textContent = data.cart_count;
+                        cartIconMobile.appendChild(countSpan);
+                    }
                 }
             } else {
-                if (cartCountElement) {
-                    cartCountElement.remove();
-                }
+                cartCountElements.forEach(el => {
+                    el.remove();
+                });
             }
             
-            // Reload dropdown
-            loadCartDropdown();
+            // Reload dropdowns (both desktop and mobile)
+            if (cartDropdown && cartDropdown.classList.contains('active')) {
+                loadCartDropdown(false);
+            }
+            if (cartDropdownMobile && cartDropdownMobile.classList.contains('active')) {
+                loadCartDropdown(true);
+            }
             
             // Reload page if on cart page
             if (window.location.pathname.includes('/korpa/')) {

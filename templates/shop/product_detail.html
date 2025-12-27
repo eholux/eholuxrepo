@@ -189,7 +189,7 @@
 
 <script>
 // ============================================
-// NEW CAROUSEL IMPLEMENTATION
+// NEW CAROUSEL IMPLEMENTATION - v2.0
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
@@ -226,9 +226,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Lightbox variables
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightboxImage');
-    const lightboxClose = document.getElementById('lightboxClose');
-    const lightboxPrev = document.getElementById('lightboxPrev');
-    const lightboxNext = document.getElementById('lightboxNext');
+    const lightboxCloseBtn = document.getElementById('lightboxClose');
+    const lightboxPrevBtn = document.getElementById('lightboxPrev');
+    const lightboxNextBtn = document.getElementById('lightboxNext');
     
     console.log('Lightbox:', lightbox ? 'Found' : 'NOT FOUND');
     
@@ -272,11 +272,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show/hide arrows
         if (productImages.length > 1) {
-            if (lightboxPrev) lightboxPrev.style.display = 'flex';
-            if (lightboxNext) lightboxNext.style.display = 'flex';
+            if (lightboxPrevBtn) lightboxPrevBtn.style.display = 'flex';
+            if (lightboxNextBtn) lightboxNextBtn.style.display = 'flex';
         } else {
-            if (lightboxPrev) lightboxPrev.style.display = 'none';
-            if (lightboxNext) lightboxNext.style.display = 'none';
+            if (lightboxPrevBtn) lightboxPrevBtn.style.display = 'none';
+            if (lightboxNextBtn) lightboxNextBtn.style.display = 'none';
         }
     }
     
@@ -346,8 +346,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Event listeners - Lightbox controls
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', function(e) {
+    if (lightboxCloseBtn) {
+        lightboxCloseBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('Lightbox close clicked');
@@ -355,8 +355,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, false);
     }
     
-    if (lightboxPrev) {
-        lightboxPrev.addEventListener('click', function(e) {
+    if (lightboxPrevBtn) {
+        lightboxPrevBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('Lightbox prev clicked');
@@ -364,8 +364,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, false);
     }
     
-    if (lightboxNext) {
-        lightboxNext.addEventListener('click', function(e) {
+    if (lightboxNextBtn) {
+        lightboxNextBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('Lightbox next clicked');
@@ -536,17 +536,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const productId = this.dataset.productId;
         const quantity = document.getElementById('quantity').value;
-        const dimensionId = dimensionInput ? dimensionInput.value : '';
-        const patternId = patternInput ? patternInput.value : '';
+        
+        // Update hidden inputs from selects before validation
+        if (dimensionSelect && dimensionInput) {
+            dimensionInput.value = dimensionSelect.value;
+        }
+        if (patternSelect && patternInput) {
+            patternInput.value = patternSelect.value;
+        }
+        
+        // Get values after updating
+        const dimensionId = dimensionInput ? dimensionInput.value : (dimensionSelect ? dimensionSelect.value : '');
+        const patternId = patternInput ? patternInput.value : (patternSelect ? patternSelect.value : '');
         
         // Validate
         if (dimensionSelect && !dimensionId) {
             alert('Molimo izaberite dimenzije.');
-            if (dimensionSelect) dimensionSelect.focus();
+            dimensionSelect.focus();
             return false;
         }
         if (patternSelect && !patternId) {
             alert('Molimo izaberite dezen.');
+            if (patternSelectCustom) {
+                patternSelectCustom.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return false;
         }
         
