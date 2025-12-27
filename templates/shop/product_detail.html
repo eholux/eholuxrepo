@@ -298,11 +298,11 @@ function initProductCarousel() {
         });
     }
     
-    
     // Event listeners for image click (open lightbox)
     slides.forEach((slide, index) => {
         const img = slide.querySelector('.carousel-image');
         if (img) {
+            img.style.cursor = 'pointer';
             img.addEventListener('click', () => {
                 openLightbox(index);
             });
@@ -339,7 +339,7 @@ function initProductCarousel() {
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-        if (lightbox.classList.contains('active')) {
+        if (lightbox && lightbox.classList.contains('active')) {
             if (e.key === 'Escape') {
                 closeLightbox();
             } else if (e.key === 'ArrowLeft') {
@@ -406,8 +406,15 @@ function initProductCarousel() {
 
 // Initialize carousel when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    if (productImages.length > 0) {
+    // Initialize carousel if images exist
+    if (typeof productImages !== 'undefined' && productImages.length > 0) {
         initProductCarousel();
+    } else {
+        // Also try to initialize if carousel elements exist (for single image)
+        const carousel = document.querySelector('.product-carousel');
+        if (carousel) {
+            initProductCarousel();
+        }
     }
     
     // Handle dimension and pattern selection
@@ -434,28 +441,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (patternSelectCustom && patternSelect && patternInput) {
         let isOpen = false;
+        let clickOutsideHandler = null;
         
         // Toggle dropdown
         if (patternSelectTrigger) {
             patternSelectTrigger.addEventListener('click', function(e) {
-                e.preventDefault();
                 e.stopPropagation();
                 isOpen = !isOpen;
-                if (isOpen) {
-                    patternSelectCustom.classList.add('open');
-                } else {
+                patternSelectCustom.classList.toggle('open', isOpen);
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (patternSelectCustom && !patternSelectCustom.contains(e.target)) {
+                    isOpen = false;
                     patternSelectCustom.classList.remove('open');
                 }
             });
         }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (patternSelectCustom && !patternSelectCustom.contains(e.target)) {
-                isOpen = false;
-                patternSelectCustom.classList.remove('open');
-            }
-        });
         
         // Handle option selection
         if (patternSelectOptions) {
