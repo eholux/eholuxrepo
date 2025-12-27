@@ -98,6 +98,7 @@
 
                 {% if product.patterns.exists %}
                     <div class="product-patterns">
+                        <h3>Dezeni</h3>
                         <div class="pattern-select-wrapper">
                             <div class="pattern-select-custom" id="pattern-select-custom">
                                 <div class="pattern-select-trigger" id="pattern-select-trigger">
@@ -105,6 +106,9 @@
                                     <span class="pattern-select-arrow">▼</span>
                                 </div>
                                 <div class="pattern-select-options" id="pattern-select-options">
+                                    <div class="pattern-select-option pattern-select-default" data-value="" data-image="">
+                                        <span class="pattern-option-text">-- Izaberite dezen --</span>
+                                    </div>
                                     {% for pattern in product.patterns.all %}
                                         <div class="pattern-select-option" data-value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">
                                             <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image">
@@ -115,7 +119,7 @@
                         </div>
                         <input type="hidden" id="pattern-select" name="pattern_id" value="" required>
                         <input type="hidden" id="pattern-input" name="pattern_id" value="">
-                        <div style="margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
+                        <div class="pattern-selected-label" id="pattern-selected-label" style="display: none; margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
                         <div class="pattern-preview" id="pattern-preview"></div>
                     </div>
                 {% endif %}
@@ -420,6 +424,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Select option
     const patternOptions = patternSelectOptions.querySelectorAll('.pattern-select-option');
+    const patternSelectedLabel = document.getElementById('pattern-selected-label');
+    
     patternOptions.forEach(function(option) {
         option.addEventListener('click', function(e) {
             e.preventDefault();
@@ -434,12 +440,26 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update placeholder
             if (patternPlaceholder) {
-                patternPlaceholder.textContent = 'Izabran dezen';
+                if (value === '') {
+                    patternPlaceholder.textContent = '-- Izaberite dezen --';
+                } else {
+                    patternPlaceholder.textContent = 'Izabran dezen';
+                }
             }
             
-            // Update preview
-            if (patternPreview && image) {
-                patternPreview.innerHTML = '<img src="' + image + '" alt="Izabrani dezen" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+            // Update preview and label visibility
+            if (patternPreview) {
+                if (value && image) {
+                    patternPreview.innerHTML = '<img src="' + image + '" alt="Izabrani dezen" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+                    if (patternSelectedLabel) {
+                        patternSelectedLabel.style.display = 'block';
+                    }
+                } else {
+                    patternPreview.innerHTML = '';
+                    if (patternSelectedLabel) {
+                        patternSelectedLabel.style.display = 'none';
+                    }
+                }
             }
             
             // Store selected image
