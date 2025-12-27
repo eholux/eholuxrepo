@@ -11,7 +11,7 @@
                 {% if product_images %}
                     <div class="product-carousel">
                     {% if product_images|length > 1 %}
-                        <button class="carousel-arrow carousel-prev" aria-label="Prethodna slika" id="carouselPrev">
+                        <button type="button" class="carousel-arrow carousel-prev" aria-label="Prethodna slika" id="carouselPrev">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M15 18l-6-6 6-6"/>
                             </svg>
@@ -27,7 +27,7 @@
                             </div>
                         </div>
                         {% if product_images|length > 1 %}
-                            <button class="carousel-arrow carousel-next" aria-label="Sledeća slika" id="carouselNext">
+                            <button type="button" class="carousel-arrow carousel-next" aria-label="Sledeća slika" id="carouselNext">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 18l6-6-6-6"/>
                                 </svg>
@@ -48,12 +48,12 @@
             
             <!-- Full Screen Lightbox -->
             <div class="lightbox" id="lightbox">
-                <button class="lightbox-close" aria-label="Zatvori" id="lightboxClose">
+                <button type="button" class="lightbox-close" aria-label="Zatvori" id="lightboxClose">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
-                <button class="lightbox-arrow lightbox-prev" aria-label="Prethodna slika" id="lightboxPrev">
+                <button type="button" class="lightbox-arrow lightbox-prev" aria-label="Prethodna slika" id="lightboxPrev">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 18l-6-6 6-6"/>
                     </svg>
@@ -61,7 +61,7 @@
                 <div class="lightbox-container">
                     <img src="" alt="" id="lightboxImage" class="lightbox-image">
                 </div>
-                <button class="lightbox-arrow lightbox-next" aria-label="Sledeća slika" id="lightboxNext">
+                <button type="button" class="lightbox-arrow lightbox-next" aria-label="Sledeća slika" id="lightboxNext">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 18l6-6-6-6"/>
                     </svg>
@@ -286,6 +286,7 @@ function initProductCarousel() {
     // Event listeners for carousel arrows
     if (prevBtn) {
         prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             prevSlide();
         });
@@ -293,6 +294,7 @@ function initProductCarousel() {
     
     if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
             nextSlide();
         });
@@ -406,15 +408,8 @@ function initProductCarousel() {
 
 // Initialize carousel when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize carousel if images exist
-    if (typeof productImages !== 'undefined' && productImages.length > 0) {
+    if (productImages.length > 0) {
         initProductCarousel();
-    } else {
-        // Also try to initialize if carousel elements exist (for single image)
-        const carousel = document.querySelector('.product-carousel');
-        if (carousel) {
-            initProductCarousel();
-        }
     }
     
     // Handle dimension and pattern selection
@@ -441,29 +436,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (patternSelectCustom && patternSelect && patternInput) {
         let isOpen = false;
-        let clickOutsideHandler = null;
         
         // Toggle dropdown
         if (patternSelectTrigger) {
             patternSelectTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
                 isOpen = !isOpen;
                 patternSelectCustom.classList.toggle('open', isOpen);
             });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (patternSelectCustom && !patternSelectCustom.contains(e.target)) {
-                    isOpen = false;
-                    patternSelectCustom.classList.remove('open');
-                }
-            });
         }
+        
+        // Close dropdown when clicking outside (use setTimeout to avoid immediate closure)
+        document.addEventListener('click', function(e) {
+            if (patternSelectCustom && isOpen && !patternSelectCustom.contains(e.target)) {
+                isOpen = false;
+                patternSelectCustom.classList.remove('open');
+            }
+        });
         
         // Handle option selection
         if (patternSelectOptions) {
             patternSelectOptions.querySelectorAll('.pattern-select-option').forEach(function(option) {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const value = this.dataset.value;
                     const image = this.dataset.image;
                     const label = this.querySelector('.pattern-option-label').textContent;
