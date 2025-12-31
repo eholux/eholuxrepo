@@ -21,13 +21,7 @@
                         {% endif %}
                         <h3>{{ product.title }}</h3>
                         <div class="product-short-description">{{ product.short_description|striptags|safe }}</div>
-                        <p class="product-price">
-                            {% if product.price %}
-                                {{ product.price }} RSD
-                            {% else %}
-                                Na upit
-                            {% endif %}
-                        </p>
+                        <p class="product-price">Izaberite opcije</p>
                     </a>
                 </div>
             {% empty %}

@@ -98,7 +98,7 @@
                                         <span class="dimension-option-text">-- Izaberite dimenzije --</span>
                                     </div>
                                     {% for dimension in product.dimensions.all %}
-                                        <div class="dimension-select-option" data-value="{{ dimension.id }}">
+                                        <div class="dimension-select-option" data-value="{{ dimension.id }}" data-price="{% if dimension.price %}{{ dimension.price }}{% endif %}">
                                             <span class="dimension-option-text">{{ dimension.get_display }}</span>
                                         </div>
                                     {% endfor %}
@@ -518,12 +518,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Select option
     const dimensionOptions = dimensionSelectOptions.querySelectorAll('.dimension-select-option');
+    const priceDisplay = document.getElementById('current-price-text');
+    
     dimensionOptions.forEach(function(option) {
         option.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
             const value = this.dataset.value;
+            const price = this.dataset.price;
             
             // Update hidden inputs
             dimensionSelect.value = value;
@@ -536,6 +539,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     const selectedText = this.querySelector('.dimension-option-text').textContent;
                     dimensionPlaceholder.textContent = selectedText;
+                }
+            }
+            
+            // Update price display
+            if (priceDisplay) {
+                if (value === '') {
+                    priceDisplay.textContent = 'Izaberite dimenzije';
+                } else if (price && price !== '') {
+                    priceDisplay.textContent = price + ' RSD';
+                } else {
+                    priceDisplay.textContent = 'Na upit';
                 }
             }
             

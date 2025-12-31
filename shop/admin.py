@@ -17,7 +17,7 @@ class ProductImageInline(admin.TabularInline):
 class ProductDimensionInline(admin.TabularInline):
     model = ProductDimension
     extra = 1
-    fields = ('length', 'width', 'height', 'order')
+    fields = ('length', 'width', 'height', 'price', 'order')
     can_delete = True
 
 

@@ -29,6 +29,7 @@ class ProductDimension(models.Model):
     length = models.DecimalField(_('Dužina (cm)'), max_digits=10, decimal_places=2)
     width = models.DecimalField(_('Dubina (cm)'), max_digits=10, decimal_places=2)
     height = models.DecimalField(_('Visina (cm)'), max_digits=10, decimal_places=2)
+    price = models.DecimalField(_('Cena (RSD)'), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_('Ostavite prazno za "Na upit"'))
     order = models.PositiveIntegerField(_('Redosled'), default=0)
 
     class Meta:
