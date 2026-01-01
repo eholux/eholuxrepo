@@ -640,35 +640,69 @@ document.addEventListener('DOMContentLoaded', function() {
             // Remove any existing error highlights
             document.querySelectorAll('.field-error-highlight').forEach(function(el) {
                 el.classList.remove('field-error-highlight');
-                const highlightRect = el.querySelector('.error-highlight-rect');
-                if (highlightRect) {
-                    highlightRect.remove();
+            });
+            document.querySelectorAll('.error-highlight-rect').forEach(function(rect) {
+                if (rect._cleanup) {
+                    rect._cleanup();
+                } else {
+                    rect.remove();
                 }
             });
             
-            // Add red rectangles around dropdown triggers
-            errorElements.forEach(function(errorElement) {
-                const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
-                const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
-                
-                if (dimensionTrigger) {
-                    addErrorHighlight(dimensionTrigger);
-                }
-                if (patternTrigger) {
-                    addErrorHighlight(patternTrigger);
-                }
-            });
+            // Wait for scroll to complete and element to be in viewport before showing highlights
+            const firstErrorElement = errorElements[0];
+            const scrollDuration = 800; // Approximate smooth scroll duration
             
-            // Remove highlights after 3 seconds
-            setTimeout(function() {
-                document.querySelectorAll('.field-error-highlight').forEach(function(el) {
-                    el.classList.remove('field-error-highlight');
-                    const highlightRect = el.querySelector('.error-highlight-rect');
-                    if (highlightRect) {
-                        highlightRect.remove();
+            // Use Intersection Observer to detect when element is in viewport
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // Element is considered visible when 50% is in viewport
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        // Element is now in viewport, add highlights
+                        errorElements.forEach(function(errorElement) {
+                            const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
+                            const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
+                            
+                            if (dimensionTrigger) {
+                                addErrorHighlight(dimensionTrigger);
+                            }
+                            if (patternTrigger) {
+                                addErrorHighlight(patternTrigger);
+                            }
+                        });
+                        
+                        // Disconnect observer after first trigger
+                        observer.disconnect();
                     }
                 });
-            }, 3000);
+            }, observerOptions);
+            
+            // Start observing the first error element
+            observer.observe(firstErrorElement);
+            
+            // Fallback: if scroll completes but element still not in viewport after scroll duration + buffer
+            setTimeout(function() {
+                if (document.querySelectorAll('.error-highlight-rect.visible').length === 0) {
+                    // Force add highlights if they haven't appeared yet
+                    errorElements.forEach(function(errorElement) {
+                        const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
+                        const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
+                        
+                        if (dimensionTrigger) {
+                            addErrorHighlight(dimensionTrigger);
+                        }
+                        if (patternTrigger) {
+                            addErrorHighlight(patternTrigger);
+                        }
+                    });
+                }
+                observer.disconnect();
+            }, scrollDuration + 500);
             
             return false;
         }
@@ -743,18 +777,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add red rectangle highlight around element
     function addErrorHighlight(targetElement) {
+        // Check if highlight already exists for this element
+        const elementId = targetElement.id || 'highlight-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        if (!targetElement.id) {
+            targetElement.id = elementId;
+        }
+        
+        const existingRect = document.querySelector('.error-highlight-rect[data-target="' + elementId + '"]');
+        if (existingRect) {
+            return; // Already highlighted
+        }
+        
         targetElement.classList.add('field-error-highlight');
         
         // Create fixed positioned rectangle that follows the element
         const highlightRect = document.createElement('div');
         highlightRect.className = 'error-highlight-rect';
+        highlightRect.setAttribute('data-target', elementId);
         highlightRect.style.position = 'fixed';
         highlightRect.style.pointerEvents = 'none';
         highlightRect.style.zIndex = '10000';
         highlightRect.style.border = '3px solid #dc3545';
         highlightRect.style.borderRadius = '5px';
         highlightRect.style.boxSizing = 'border-box';
-        highlightRect.style.animation = 'fieldErrorBlink 0.6s ease-in-out 5';
         document.body.appendChild(highlightRect);
         
         // Function to update rectangle position (using viewport coordinates for fixed positioning)
@@ -768,6 +813,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Initial position
         updatePosition();
+        
+        // Wait a moment for initial positioning, then fade in and start animation
+        setTimeout(function() {
+            highlightRect.classList.add('visible');
+        }, 50);
         
         // Update position on scroll, resize, and zoom
         const updateEvents = ['scroll', 'resize', 'orientationchange'];
@@ -788,22 +838,26 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Cleanup function
         highlightRect._cleanup = function() {
-            updateEvents.forEach(function(eventType) {
-                window.removeEventListener(eventType, updateHandler);
-            });
-            document.removeEventListener('touchmove', updateHandler);
-            if (highlightRect.parentNode) {
-                highlightRect.parentNode.removeChild(highlightRect);
-            }
+            // Fade out before removing
+            highlightRect.classList.remove('visible');
+            setTimeout(function() {
+                updateEvents.forEach(function(eventType) {
+                    window.removeEventListener(eventType, updateHandler);
+                });
+                document.removeEventListener('touchmove', updateHandler);
+                if (highlightRect.parentNode) {
+                    highlightRect.parentNode.removeChild(highlightRect);
+                }
+            }, 400); // Wait for fade out transition
         };
         
-        // Auto cleanup after 3 seconds
+        // Auto cleanup after animation completes (4 cycles * 1.2s = 4.8s + fade in/out)
         setTimeout(function() {
             if (highlightRect._cleanup) {
                 highlightRect._cleanup();
             }
             targetElement.classList.remove('field-error-highlight');
-        }, 3000);
+        }, 5200); // 4.8s animation + 0.4s fade out
     }
     
     // Notification function
