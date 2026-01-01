@@ -126,7 +126,10 @@
                             {% endif %}
                         </button>
                         <div class="cart-dropdown" id="cartDropdown">
-                            <div class="cart-dropdown-header">Korpa</div>
+                            <div class="cart-dropdown-header">
+                                <span>Korpa</span>
+                                <button class="cart-dropdown-close" onclick="document.getElementById('cartDropdown').classList.remove('active')" aria-label="Zatvori">×</button>
+                            </div>
                             <div class="cart-dropdown-items" id="cartDropdownItems">
                                 <!-- Items will be loaded here -->
                             </div>
@@ -176,7 +179,10 @@
                             {% endif %}
                         </button>
                         <div class="cart-dropdown mobile-cart-dropdown" id="cartDropdownMobile">
-                            <div class="cart-dropdown-header">Korpa</div>
+                            <div class="cart-dropdown-header">
+                                <span>Korpa</span>
+                                <button class="cart-dropdown-close" onclick="document.getElementById('cartDropdownMobile').classList.remove('active')" aria-label="Zatvori">×</button>
+                            </div>
                             <div class="cart-dropdown-items" id="cartDropdownItemsMobile">
                                 <!-- Items will be loaded here -->
                             </div>

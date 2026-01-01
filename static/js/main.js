@@ -166,14 +166,13 @@ document.querySelectorAll('.add-to-cart-form').forEach(form => {
                     }
                 }
                 
-                // Show success message
-                alert(data.message);
+                // Success is handled by product_detail.html notification system
             } else {
-                alert(data.message);
+                // Error is handled by product_detail.html notification system
             }
         } catch (error) {
             console.error('Add to cart error:', error);
-            alert('Došlo je do greške. Molimo pokušajte ponovo.');
+            // Error is handled by product_detail.html notification system
         }
     });
 });

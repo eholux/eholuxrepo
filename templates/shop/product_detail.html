@@ -72,10 +72,6 @@
             <div class="product-info">
                 <h1>{{ product.title }}</h1>
                 <p class="product-sku">SKU: {{ product.sku }}</p>
-                
-                <div class="product-price" id="product-price-display">
-                    <span class="current-price" id="current-price-text">Izaberite opcije</span>
-                </div>
 
                 <div class="product-description">
                     <div class="full-description">{{ product.full_description|safe }}</div>
@@ -102,7 +98,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="dimension-select" name="dimension_id" value="" required>
+                        <input type="hidden" id="dimension-select" name="dimension_id" value="">
                         <input type="hidden" id="dimension-input" name="dimension_id" value="">
                     </div>
                 {% endif %}
@@ -128,7 +124,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="pattern-select" name="pattern_id" value="" required>
+                        <input type="hidden" id="pattern-select" name="pattern_id" value="">
                         <input type="hidden" id="pattern-input" name="pattern_id" value="">
                         <div class="pattern-selected-label" id="pattern-selected-label" style="display: none; margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
                         <div class="pattern-preview" id="pattern-preview"></div>
@@ -150,6 +146,9 @@
                 {% if product.is_in_stock %}
                     <form class="add-to-cart-form" data-product-id="{{ product.id }}">
                         {% csrf_token %}
+                        <div class="product-price" id="product-price-display" style="margin-bottom: 15px;">
+                            <span class="current-price" id="current-price-text">Izaberite opcije</span>
+                        </div>
                         <div class="quantity-selector">
                             <label for="quantity">Količina:</label>
                             <input type="number" id="quantity" name="quantity" value="1" min="1" {% if product.stock_type == 'limited' %}max="{{ product.stock_quantity }}"{% endif %}>
@@ -596,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validate and show visual feedback instead of alerts
         let hasError = false;
-        let errorElement = null;
+        let errorElements = [];
         
         // Get selected dimension to check if it has a price
         const dimensionSelectOptions = document.getElementById('dimension-select-options');
@@ -610,27 +609,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        // Check dimension field
         if (dimensionInput && dimensionInput.value === '') {
             hasError = true;
-            errorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
+            const dimensionErrorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
+            if (dimensionErrorElement) {
+                errorElements.push(dimensionErrorElement);
+            }
         } else if (dimensionInput && dimensionInput.value !== '' && !selectedDimensionHasPrice) {
             hasError = true;
-            errorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
-        } else if (patternInput && patternInput.value === '') {
-            hasError = true;
-            errorElement = document.getElementById('pattern-select-custom') ? document.getElementById('pattern-select-custom').closest('.product-patterns') : null;
+            const dimensionErrorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
+            if (dimensionErrorElement) {
+                errorElements.push(dimensionErrorElement);
+            }
         }
         
-        if (hasError && errorElement) {
-            // Scroll to error element
-            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Check pattern field (mandatory)
+        if (patternInput && patternInput.value === '') {
+            hasError = true;
+            const patternErrorElement = document.getElementById('pattern-select-custom') ? document.getElementById('pattern-select-custom').closest('.product-patterns') : null;
+            if (patternErrorElement) {
+                errorElements.push(patternErrorElement);
+            }
+        }
+        
+        if (hasError && errorElements.length > 0) {
+            // Scroll to first error element
+            errorElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Add blinking red border animation
-            errorElement.classList.add('field-error-highlight');
+            // Add blinking red border animation to all error elements
+            errorElements.forEach(function(errorElement) {
+                errorElement.classList.add('field-error-highlight');
+            });
             
             // Remove animation after 3 seconds
             setTimeout(function() {
-                errorElement.classList.remove('field-error-highlight');
+                errorElements.forEach(function(errorElement) {
+                    errorElement.classList.remove('field-error-highlight');
+                });
             }, 3000);
             
             return false;
