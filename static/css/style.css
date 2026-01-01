@@ -2119,11 +2119,16 @@ a.btn-primary * {
 .cart-dropdown-item-remove {
     background: none;
     border: none;
-    color: #dc3545;
+    color: #dc3545 !important;
     cursor: pointer;
     padding: 5px;
     font-size: 18px;
     line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.cart-dropdown-item-remove:hover {
+    color: #c82333 !important;
 }
 
 .cart-dropdown-footer {
