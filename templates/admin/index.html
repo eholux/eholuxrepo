@@ -1,0 +1,33 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Translate app labels to Serbian
+    const headings = document.querySelectorAll('.module h2, .module caption');
+    headings.forEach(function(heading) {
+        const text = heading.textContent.trim();
+        
+        // Translate "Authentication and Authorization"
+        if (text === 'Authentication and Authorization' || text === 'Authentication & Authorization') {
+            heading.textContent = 'Autentifikacija i autorizacija';
+        }
+        // Translate "Accounts"
+        else if (text === 'Accounts') {
+            heading.textContent = 'Nalozi';
+        }
+        // Translate "Core"
+        else if (text === 'Core') {
+            heading.textContent = 'Osnovno';
+        }
+        // Translate "Shop"
+        else if (text === 'Shop') {
+            heading.textContent = 'Prodavnica';
+        }
+    });
+});
+</script>
+{% endblock %}
+

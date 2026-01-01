@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="actions">
+    {% block actions %}
+        {% block actions-form %}
+            {% for field in action_form %}
+                {% if field.label %}
+                    <label>Akcija: {{ field }}</label>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        {% block actions-submit %}
+            <button type="submit" class="button" title="{% trans 'Run the selected action' %}" name="index" value="{{ action_index|default:0 }}">Izvrši</button>
+        {% endblock %}
+        {% block actions-counter %}
+            {% if actions_selection_counter %}
+                <span class="action-counter" data-actions-icnt="{{ cl.result_count }}">{{ selection_note }}</span>
+                {% if cl.result_count != cl.result_list|length %}
+                    <span class="all" style="display: none;">{{ selection_note_all }}</span>
+                    <span class="question" style="display: none;">
+                        <a href="#" class="button">{% blocktrans with cl.result_count as total_count %}Izaberi sve {{ total_count }} {{ module_name }}{% endblocktrans %}</a>
+                    </span>
+                    <span class="clear" style="display: none;"><a href="#">{% trans "Clear selection" %}</a></span>
+                {% endif %}
+            {% endif %}
+        {% endblock %}
+    {% endblock %}
+</div>
+

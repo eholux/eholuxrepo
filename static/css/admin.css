@@ -112,6 +112,40 @@ select.error {
     border: 1px solid #000000 !important;
 }
 
+/* Hide filter sidebar */
+#changelist-filter {
+    display: none !important;
+}
+
+/* Hide navigation filter */
+#nav-filter {
+    display: none !important;
+}
+
+/* Translate actions dropdown */
+.actions select option[value="delete_selected"] {
+    text-indent: -9999px;
+}
+.actions select option[value="delete_selected"]::before {
+    content: "Obriši izabrane";
+    text-indent: 0;
+    display: block;
+}
+
+.actions select option[value=""] {
+    text-indent: -9999px;
+}
+.actions select option[value=""]::before {
+    content: "---------";
+    text-indent: 0;
+    display: block;
+}
+
+/* Translate action counter */
+.action-counter::before {
+    content: "Izabrano: ";
+}
+
 /* Responsive Admin */
 @media (max-width: 768px) {
     #header {

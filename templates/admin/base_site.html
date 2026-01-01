@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}{{ title }} | EhoLux administracija{% endblock %}
 
@@ -12,6 +12,60 @@
 {% block extrastyle %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block usertools %}
+<div id="user-tools">
+    {% block welcome-msg %}
+        Dobrodošli,
+        <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    {% endblock %}
+    {% block userlinks %}
+        {% if site_url %}
+            <a href="{{ site_url }}">Pregled sajta</a> /
+        {% endif %}
+        {% if user.is_active and user.is_staff %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+            {% if docsroot %}
+                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+            {% endif %}
+        {% endif %}
+        {% if user.has_usable_password %}
+            <a href="{% url 'admin:password_change' %}">Promeni lozinku</a> /
+        {% endif %}
+        <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+            {% csrf_token %}
+            <button type="submit">Odjavi se</button>
+        </form>
+        {% block theme-toggle %}
+            {% if user.is_active and user.is_staff %}
+                <button class="theme-toggle">
+                    <div class="visually-hidden theme-label-when-auto">{% trans 'Toggle theme (current theme: auto)' %}</div>
+                    <div class="visually-hidden theme-label-when-light">{% trans 'Toggle theme (current theme: light)' %}</div>
+                    <div class="visually-hidden theme-label-when-dark">{% trans 'Toggle theme (current theme: dark)' %}</div>
+                    <svg aria-hidden="true" class="theme-icon-when-auto">
+                        <use xlink:href="#icon-auto"></use>
+                    </svg>
+                    <svg aria-hidden="true" class="theme-icon-when-dark">
+                        <use xlink:href="#icon-moon"></use>
+                    </svg>
+                    <svg aria-hidden="true" class="theme-icon-when-light">
+                        <use xlink:href="#icon-sun"></use>
+                    </svg>
+                </button>
+            {% endif %}
+        {% endblock %}
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="icon" type="image/webp" href="{% static 'images/favicon.webp' %}" sizes="32x32">
+<link rel="icon" type="image/webp" href="{% static 'images/favicon.webp' %}" sizes="16x16">
+<link rel="apple-touch-icon" href="{% static 'images/favicon.webp' %}">
+<link rel="shortcut icon" type="image/webp" href="{% static 'images/favicon.webp' %}">
+<script src="{% static 'js/admin.js' %}"></script>
 {% endblock %}
 
 

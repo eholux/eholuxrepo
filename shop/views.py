@@ -234,6 +234,7 @@ def cart_dropdown(request):
         
         items.append({
             'product_id': item['product'].id,
+            'cart_key': item.get('cart_key', ''),  # Include cart_key for removal
             'title': item['product'].title,
             'quantity': item['quantity'],
             'price': price_display,

@@ -637,15 +637,31 @@ document.addEventListener('DOMContentLoaded', function() {
             // Scroll to first error element
             errorElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Add blinking red border animation to all error elements
+            // Add blinking red border animation to dropdown triggers only
             errorElements.forEach(function(errorElement) {
-                errorElement.classList.add('field-error-highlight');
+                const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
+                const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
+                
+                if (dimensionTrigger) {
+                    dimensionTrigger.classList.add('field-error-highlight');
+                }
+                if (patternTrigger) {
+                    patternTrigger.classList.add('field-error-highlight');
+                }
             });
             
             // Remove animation after 3 seconds
             setTimeout(function() {
                 errorElements.forEach(function(errorElement) {
-                    errorElement.classList.remove('field-error-highlight');
+                    const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
+                    const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
+                    
+                    if (dimensionTrigger) {
+                        dimensionTrigger.classList.remove('field-error-highlight');
+                    }
+                    if (patternTrigger) {
+                        patternTrigger.classList.remove('field-error-highlight');
+                    }
                 });
             }, 3000);
             

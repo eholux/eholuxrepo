@@ -270,7 +270,7 @@ function loadCartDropdown(isMobile = false) {
                             <p>Količina: ${item.quantity}</p>
                             <p>${item.price}</p>
                         </div>
-                        <button class="cart-dropdown-item-remove" data-product-id="${item.product_id}" onclick="removeFromCartDropdown(${item.product_id})">×</button>
+                        <button class="cart-dropdown-item-remove" data-product-id="${item.product_id}" data-cart-key="${item.cart_key || ''}" onclick="removeFromCartDropdown('${item.cart_key || ''}', ${item.product_id})">×</button>
                     </div>
                 `).join('');
                 totalElement.textContent = data.total;
@@ -322,9 +322,17 @@ document.addEventListener('click', function(e) {
     }
 });
 
-function removeFromCartDropdown(productId) {
+function removeFromCartDropdown(cartKey, productId) {
     const formData = new FormData();
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfToken) {
+        formData.append('csrfmiddlewaretoken', csrfToken.value);
+    }
+    
+    // Add cart_key if available
+    if (cartKey) {
+        formData.append('cart_key', cartKey);
+    }
     
     fetch(`/prodavnica/ukloni-iz-korpe/${productId}/`, {
         method: 'POST',
