@@ -37,24 +37,6 @@
             {% csrf_token %}
             <button type="submit">Odjavi se</button>
         </form>
-        {% block theme-toggle %}
-            {% if user.is_active and user.is_staff %}
-                <button class="theme-toggle">
-                    <div class="visually-hidden theme-label-when-auto">{% trans 'Toggle theme (current theme: auto)' %}</div>
-                    <div class="visually-hidden theme-label-when-light">{% trans 'Toggle theme (current theme: light)' %}</div>
-                    <div class="visually-hidden theme-label-when-dark">{% trans 'Toggle theme (current theme: dark)' %}</div>
-                    <svg aria-hidden="true" class="theme-icon-when-auto">
-                        <use xlink:href="#icon-auto"></use>
-                    </svg>
-                    <svg aria-hidden="true" class="theme-icon-when-dark">
-                        <use xlink:href="#icon-moon"></use>
-                    </svg>
-                    <svg aria-hidden="true" class="theme-icon-when-light">
-                        <use xlink:href="#icon-sun"></use>
-                    </svg>
-                </button>
-            {% endif %}
-        {% endblock %}
     {% endblock %}
 </div>
 {% endblock %}

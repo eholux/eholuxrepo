@@ -2,6 +2,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
+    // Force light theme - remove any dark theme attributes
+    if (document.documentElement.hasAttribute('data-theme')) {
+        document.documentElement.removeAttribute('data-theme');
+    }
+    if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+    }
+    // Ensure light theme is set
+    document.documentElement.setAttribute('data-theme', 'light');
+    
     // Translate actions dropdown
     const actionSelect = document.querySelector('.actions select[name="action"]');
     if (actionSelect) {
@@ -67,6 +77,42 @@ document.addEventListener('DOMContentLoaded', function() {
             link.textContent = 'Dodaj ' + modelName;
         }
     });
+    
+    // Translate breadcrumbs
+    const breadcrumbs = document.querySelector('.breadcrumbs');
+    if (breadcrumbs) {
+        const breadcrumbLinks = breadcrumbs.querySelectorAll('a');
+        breadcrumbLinks.forEach(function(link) {
+            const text = link.textContent.trim();
+            // Translate "Home"
+            if (text === 'Home') {
+                link.textContent = 'Početna';
+            }
+            // Translate app names
+            else if (text === 'Blog') {
+                link.textContent = 'Blog';
+            }
+            else if (text === 'Accounts') {
+                link.textContent = 'Nalozi';
+            }
+            else if (text === 'Core') {
+                link.textContent = 'Osnovno';
+            }
+            else if (text === 'Shop') {
+                link.textContent = 'Prodavnica';
+            }
+            else if (text === 'Authentication and Authorization' || text === 'Authentication & Authorization') {
+                link.textContent = 'Autentifikacija i autorizacija';
+            }
+        });
+        
+        // Also translate any text nodes in breadcrumbs (non-link text)
+        const breadcrumbText = breadcrumbs.textContent;
+        if (breadcrumbText.includes('Home')) {
+            // Replace "Home" in the entire breadcrumb text
+            breadcrumbs.innerHTML = breadcrumbs.innerHTML.replace(/Home/g, 'Početna');
+        }
+    }
     
     // Translate app labels to Serbian
     const headings = document.querySelectorAll('h2, .module h2, .module caption');

@@ -348,6 +348,11 @@ select.error {
     display: none !important;
 }
 
+/* Hide theme toggle button */
+.theme-toggle {
+    display: none !important;
+}
+
 /* Translate actions dropdown */
 .actions select option[value="delete_selected"] {
     text-indent: -9999px;
