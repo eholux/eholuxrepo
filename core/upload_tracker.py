@@ -215,12 +215,25 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                     except CkeditorUpload.DoesNotExist:
                         pass  # Record doesn't exist, that's fine
                 else:
-                    # Upload IS in the current blog's HTML - delete tracking record immediately
+                    # Upload IS in the current blog's HTML - mark as used (will be cleaned up later)
+                    # We mark it as used first to ensure proper tracking, then delete immediately after
                     try:
                         upload_record = CkeditorUpload.objects.get(file_path=upload_path)
-                        upload_record.delete()  # Delete immediately - no need to keep it
+                        upload_record.is_used = True
+                        upload_record.used_in_model = model_name
+                        upload_record.used_in_id = instance_id
+                        upload_record.save()
+                        # Delete immediately after marking (no need to keep it)
+                        upload_record.delete()
                     except CkeditorUpload.DoesNotExist:
-                        pass  # Record doesn't exist, that's fine
+                        # Create and immediately delete (ensures tracking happened)
+                        upload_record = CkeditorUpload.objects.create(
+                            file_path=upload_path,
+                            is_used=True,
+                            used_in_model=model_name,
+                            used_in_id=instance_id,
+                        )
+                        upload_record.delete()
         else:
             # Fallback: if no session uploads, check all unused uploads from database
             # This handles cases where session might not be available
@@ -245,7 +258,12 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                         # Delete the tracking record
                         upload.delete()
                 else:
-                    # Upload IS in the current blog's HTML - delete tracking record immediately
+                    # Upload IS in the current blog's HTML - mark as used then delete immediately
+                    upload.is_used = True
+                    upload.used_in_model = model_name
+                    upload.used_in_id = instance_id
+                    upload.save()
+                    # Delete immediately after marking (no need to keep it)
                     upload.delete()
         
         # Return early for new instances (we've handled the cleanup)

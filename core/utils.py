@@ -130,14 +130,11 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     # Find orphaned images (in old but not in current)
     orphaned_paths = old_image_paths - current_image_paths
     
-    # Note: We no longer mark uploads as "used" and keep them in database
-    # Instead, we delete tracking records immediately when images are saved
-    # The HTML content is the source of truth - we can extract images from it anytime
-    # This keeps the database clean and avoids bulk accumulation
-    
-    # Always cleanup unused uploads (for both new and edited instances)
+    # Always cleanup unused uploads FIRST (for both new and edited instances)
     # This handles cases where images were uploaded but removed before saving
-    # Pass old_instance info to help determine if this is a new instance
+    # We need to do this BEFORE marking uploads as used, so we can find orphaned ones
+    model_name = model_instance.__class__.__name__
+    instance_id = model_instance.pk
     is_new_instance = old_instance is None
     
     # For new instances, try to get session uploads if available
@@ -154,6 +151,23 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     except Exception as e:
         # Log error but don't fail the save
         logger.warning(f"Failed to cleanup unused uploads: {str(e)}")
+    
+    # Mark used uploads as used (for tracking purposes) - AFTER cleanup
+    # This ensures orphaned uploads are deleted before we mark others as used
+    # We'll delete these records immediately after, but mark them first for consistency
+    for path in current_image_paths:
+        if path.startswith('uploads/'):
+            try:
+                mark_upload_as_used(path, model_name, instance_id)
+                # Delete immediately after marking (no need to keep it)
+                try:
+                    upload_record = CkeditorUpload.objects.get(file_path=path)
+                    upload_record.delete()
+                except CkeditorUpload.DoesNotExist:
+                    pass
+            except Exception as e:
+                # Log error but don't fail the save
+                logger.warning(f"Failed to mark upload as used: {path} - {str(e)}")
     
     # Clear session uploads after cleanup (for new instances)
     if is_new_instance and session_uploads is not None:
