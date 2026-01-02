@@ -281,16 +281,76 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Translate delete confirmation text
-    const deleteConfirm = document.querySelector('.delete-confirmation, .deletelink-confirmation');
-    if (deleteConfirm) {
-        let confirmText = deleteConfirm.textContent;
-        confirmText = confirmText.replace(/Yes, I'm sure/g, 'Da, siguran sam');
-        confirmText = confirmText.replace(/The following objects will be deleted:/g, 'Sledeći objekti će biti obrisani:');
-        confirmText = confirmText.replace(/Are you sure you want to delete/g, 'Da li ste sigurni da želite da obrišete');
-        if (deleteConfirm.textContent !== confirmText) {
-            deleteConfirm.textContent = confirmText;
-        }
+    function translateDeleteConfirmation() {
+        // Translate headings
+        const headings = document.querySelectorAll('h1, h2');
+        headings.forEach(function(heading) {
+            let text = heading.textContent.trim();
+            if (text === 'Are you sure?') {
+                heading.textContent = 'Da li ste sigurni?';
+            } else if (text.includes('Delete multiple objects')) {
+                heading.textContent = 'Obriši više objekata';
+            } else if (text.includes('Delete')) {
+                heading.textContent = text.replace(/Delete/g, 'Obriši');
+            }
+        });
+        
+        // Translate paragraphs
+        const paragraphs = document.querySelectorAll('p');
+        paragraphs.forEach(function(p) {
+            let text = p.textContent.trim();
+            if (text.includes('Are you sure you want to delete')) {
+                p.textContent = text.replace(/Are you sure you want to delete/g, 'Da li ste sigurni da želite da obrišete');
+            } else if (text.includes('the selected')) {
+                p.textContent = text.replace(/the selected/g, 'izabrani');
+            }
+        });
+        
+        // Translate summary section
+        const allH2 = document.querySelectorAll('h2');
+        allH2.forEach(function(h2) {
+            const text = h2.textContent.trim();
+            if (text === 'Summary') {
+                h2.textContent = 'Pregled';
+            } else if (text === 'Objects') {
+                h2.textContent = 'Objekti';
+            }
+        });
+        
+        // Translate buttons
+        const buttons = document.querySelectorAll('input[type="submit"], button[type="submit"], a.button');
+        buttons.forEach(function(btn) {
+            let text = btn.value || btn.textContent.trim();
+            if (text === 'Yes, I\'m sure' || text === "Yes, I'm sure") {
+                if (btn.value) {
+                    btn.value = 'Da, siguran sam';
+                } else {
+                    btn.textContent = 'Da, siguran sam';
+                }
+            } else if (text === 'No, take me back') {
+                if (btn.value) {
+                    btn.value = 'Ne, vrati me nazad';
+                } else {
+                    btn.textContent = 'Ne, vrati me nazad';
+                }
+            }
+        });
+        
+        // Translate links
+        const links = document.querySelectorAll('a');
+        links.forEach(function(link) {
+            let text = link.textContent.trim();
+            if (text === 'No, take me back') {
+                link.textContent = 'Ne, vrati me nazad';
+            }
+        });
     }
+    
+    // Run translation immediately
+    translateDeleteConfirmation();
+    
+    // Also run after a short delay to catch dynamically loaded content
+    setTimeout(translateDeleteConfirmation, 100);
     
     // Translate "Select all" text
     const selectAllLinks = document.querySelectorAll('.selector-chosen a, .selector-available a');

@@ -377,6 +377,191 @@ select.error {
     content: "Izabrano: ";
 }
 
+/* Delete Confirmation Page */
+.delete-confirmation,
+.deletelink-confirmation,
+#content .delete-confirmation,
+#content .deletelink-confirmation {
+    background-color: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 5px !important;
+    margin: 20px 0 !important;
+}
+
+#content .module {
+    background-color: #ffffff !important;
+    padding: 20px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 5px !important;
+    margin-bottom: 20px !important;
+}
+
+#content .module h1,
+#content .module h2 {
+    color: #000000 !important;
+    margin-bottom: 15px !important;
+}
+
+#content .module p {
+    color: #000000 !important;
+    margin-bottom: 10px !important;
+    line-height: 1.6 !important;
+}
+
+#content .module ul {
+    background-color: #f8f9fa !important;
+    padding: 15px 15px 15px 35px !important;
+    border-radius: 5px !important;
+    margin: 15px 0 !important;
+    list-style: disc !important;
+}
+
+#content .module ul li {
+    color: #000000 !important;
+    margin-bottom: 8px !important;
+    line-height: 1.5 !important;
+}
+
+.delete-confirmation h1,
+.deletelink-confirmation h1 {
+    color: #000000 !important;
+    margin-bottom: 20px !important;
+}
+
+.delete-confirmation p,
+.deletelink-confirmation p {
+    color: #000000 !important;
+    margin-bottom: 15px !important;
+}
+
+.delete-confirmation ul,
+.deletelink-confirmation ul {
+    background-color: #f8f9fa !important;
+    padding: 15px !important;
+    border-radius: 5px !important;
+    margin: 15px 0 !important;
+    list-style: disc inside !important;
+}
+
+.delete-confirmation ul li,
+.deletelink-confirmation ul li {
+    color: #000000 !important;
+    margin-bottom: 8px !important;
+}
+
+.delete-confirmation .summary,
+.deletelink-confirmation .summary {
+    background-color: #f8f9fa !important;
+    padding: 15px !important;
+    border-radius: 5px !important;
+    margin: 15px 0 !important;
+    border-left: 4px solid #dc3545 !important;
+}
+
+.delete-confirmation .summary h2,
+.deletelink-confirmation .summary h2 {
+    color: #000000 !important;
+    margin-bottom: 10px !important;
+}
+
+.delete-confirmation .summary ul,
+.deletelink-confirmation .summary ul {
+    background-color: transparent !important;
+    padding: 0 !important;
+    margin: 10px 0 !important;
+}
+
+.delete-confirmation .summary ul li,
+.deletelink-confirmation .summary ul li {
+    color: #000000 !important;
+}
+
+.delete-confirmation .object-list,
+.deletelink-confirmation .object-list {
+    background-color: #ffffff !important;
+    padding: 15px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 5px !important;
+    margin: 15px 0 !important;
+}
+
+.delete-confirmation .object-list h2,
+.deletelink-confirmation .object-list h2 {
+    color: #000000 !important;
+    margin-bottom: 15px !important;
+}
+
+.delete-confirmation .object-list ul,
+.deletelink-confirmation .object-list ul {
+    background-color: #f8f9fa !important;
+    padding: 15px !important;
+    border-radius: 5px !important;
+}
+
+.delete-confirmation .object-list ul li,
+.deletelink-confirmation .object-list ul li {
+    color: #000000 !important;
+    padding: 5px 0 !important;
+}
+
+.delete-confirmation form,
+.deletelink-confirmation form {
+    margin-top: 20px !important;
+}
+
+.delete-confirmation .submit-row,
+.deletelink-confirmation .submit-row {
+    padding: 15px 0 !important;
+    border-top: 1px solid #e0e0e0 !important;
+    margin-top: 20px !important;
+}
+
+.delete-confirmation .submit-row input,
+.deletelink-confirmation .submit-row input {
+    margin-right: 10px !important;
+}
+
+/* Delete page buttons and links */
+#content .submit-row {
+    padding: 15px 0 !important;
+    border-top: 1px solid #e0e0e0 !important;
+    margin-top: 20px !important;
+}
+
+#content .submit-row a,
+#content .submit-row input[type="submit"],
+#content .submit-row button {
+    display: inline-block !important;
+    padding: 10px 20px !important;
+    margin-right: 10px !important;
+    text-decoration: none !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+}
+
+#content .submit-row a {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+#content .submit-row a:hover {
+    background-color: #5a6268 !important;
+    color: #ffffff !important;
+}
+
+#content .submit-row input[type="submit"],
+#content .submit-row button[type="submit"] {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border: none !important;
+    cursor: pointer !important;
+}
+
+#content .submit-row input[type="submit"]:hover,
+#content .submit-row button[type="submit"]:hover {
+    background-color: #c82333 !important;
+}
+
 /* Responsive Admin */
 @media (max-width: 768px) {
     #header {
