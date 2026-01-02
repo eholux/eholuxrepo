@@ -6,8 +6,6 @@
 {% block content %}
 <div class="blog-list-page">
     <div class="container">
-        <h1>Blogovi</h1>
-        
         <div class="blog-grid">
             {% for post in posts %}
                 <article class="blog-card">
@@ -20,7 +18,7 @@
                         <div class="blog-card-content">
                             <h2>{{ post.title }}</h2>
                             {% if post.short_description %}
-                                <p>{{ post.short_description|truncatewords:30 }}</p>
+                                <p>{{ post.short_description|striptags|truncatewords:30 }}</p>
                             {% endif %}
                             <span class="blog-date">{{ post.created_at|date:"d.m.Y" }}</span>
                         </div>

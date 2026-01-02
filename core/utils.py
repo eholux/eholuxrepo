@@ -3,11 +3,14 @@ Utility functions for R2 bucket cleanup
 """
 import os
 import re
+import logging
 from urllib.parse import urlparse
 from django.conf import settings
 from django.core.files.storage import default_storage
 from datetime import datetime, timedelta
 from .upload_tracker import cleanup_unused_uploads, mark_upload_as_used, cleanup_old_tracking_records, delete_file_from_storage
+
+logger = logging.getLogger(__name__)
 
 
 def extract_images_from_html(html_content):
@@ -132,7 +135,11 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     instance_id = model_instance.pk
     for path in current_image_paths:
         if path.startswith('uploads/'):
-            mark_upload_as_used(path, model_name, instance_id)
+            try:
+                mark_upload_as_used(path, model_name, instance_id)
+            except Exception as e:
+                # Log error but don't fail the save
+                logger.warning(f"Failed to mark upload as used: {path} - {str(e)}")
     
     # For new instances, use upload tracking to find orphaned uploads
     if not old_instance:

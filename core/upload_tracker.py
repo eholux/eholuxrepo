@@ -77,7 +77,9 @@ def mark_upload_as_used(file_path, model_name, instance_id):
         return
     
     try:
-        upload = CkeditorUpload.objects.get(file_path=file_path, is_used=False)
+        # Try to get the upload (whether used or not)
+        upload = CkeditorUpload.objects.get(file_path=file_path)
+        # Update it to mark as used (even if already used, update the reference)
         upload.is_used = True
         upload.used_in_model = model_name
         upload.used_in_id = instance_id
@@ -91,6 +93,17 @@ def mark_upload_as_used(file_path, model_name, instance_id):
             used_in_model=model_name,
             used_in_id=instance_id,
         )
+    except CkeditorUpload.MultipleObjectsReturned:
+        # Handle case where multiple records exist (shouldn't happen, but be safe)
+        # Get the first one and update it, delete the rest
+        uploads = CkeditorUpload.objects.filter(file_path=file_path)
+        upload = uploads.first()
+        upload.is_used = True
+        upload.used_in_model = model_name
+        upload.used_in_id = instance_id
+        upload.save()
+        # Delete duplicates
+        uploads.exclude(pk=upload.pk).delete()
 
 
 def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):

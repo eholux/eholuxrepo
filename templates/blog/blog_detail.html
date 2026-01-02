@@ -13,7 +13,7 @@
             <h1>{{ post.title }}</h1>
             <p class="blog-meta">{{ post.created_at|date:"d.m.Y" }}</p>
             {% if post.short_description %}
-                <p class="blog-short-description">{{ post.short_description }}</p>
+                <p class="blog-short-description">{{ post.short_description|striptags }}</p>
             {% endif %}
             <div class="blog-content">
                 {{ post.full_description|safe }}
