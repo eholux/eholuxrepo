@@ -11,6 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .upload_tracker import track_upload
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -23,51 +26,126 @@ class TrackedImageUploadView(ImageUploadView):
     def post(self, request, **kwargs):
         """
         Uploads a file and tracks it for orphaned file cleanup.
+        Returns JSON response for modern CKEditor (6.7.0+).
         """
-        uploaded_file = request.FILES["upload"]
-        
-        backend = get_backend()
-        storage = utils.storage
-        
-        ck_func_num = request.GET.get("CKEditorFuncNum")
-        if ck_func_num:
-            ck_func_num = escape(ck_func_num)
-        
-        filewrapper = backend(storage, uploaded_file)
-        allow_nonimages = getattr(settings, "CKEDITOR_ALLOW_NONIMAGE_FILES", True)
-        
-        # Throws an error when an non-image file are uploaded.
-        if not filewrapper.is_image and not allow_nonimages:
-            return HttpResponse(
-                """
-                <script type='text/javascript'>
-                window.parent.CKEDITOR.tools.callFunction({}, '', 'Invalid file type.');
-                </script>""".format(
-                    ck_func_num
-                )
-            )
-        
-        filepath = get_upload_filename(uploaded_file.name, request)
-        saved_path = filewrapper.save_as(filepath)
-        
-        # Track the upload
-        # saved_path is relative to media root (e.g., "uploads/2024/01/15/image.jpg")
-        track_upload(saved_path, user=request.user if request.user.is_authenticated else None)
-        
-        url = utils.get_media_url(saved_path)
-        
-        if ck_func_num:
-            # Respond with Javascript sending ckeditor upload url.
-            return HttpResponse(
-                """
-            <script type='text/javascript'>
-                window.parent.CKEDITOR.tools.callFunction({}, '{}');
-            </script>""".format(
-                    ck_func_num, url
-                )
-            )
-        else:
+        try:
+            # Check if user is authenticated (required for admin)
+            if not request.user.is_authenticated:
+                error_msg = "Authentication required."
+                return JsonResponse({
+                    "uploaded": 0,
+                    "error": {
+                        "message": error_msg
+                    }
+                }, status=403)
+            
+            # Check if upload file exists
+            if "upload" not in request.FILES:
+                return JsonResponse({
+                    "uploaded": 0,
+                    "error": {
+                        "message": "No file uploaded."
+                    }
+                }, status=400)
+            
+            uploaded_file = request.FILES["upload"]
+            
+            backend = get_backend()
+            storage = utils.storage
+            
+            ck_func_num = request.GET.get("CKEditorFuncNum")
+            if ck_func_num:
+                ck_func_num = escape(ck_func_num)
+            
+            filewrapper = backend(storage, uploaded_file)
+            allow_nonimages = getattr(settings, "CKEDITOR_ALLOW_NONIMAGE_FILES", True)
+            
+            # Check if file is an image
+            if not filewrapper.is_image and not allow_nonimages:
+                error_msg = "Invalid file type. Only image files are allowed."
+                if ck_func_num:
+                    # Legacy format for old CKEditor
+                    return HttpResponse(
+                        """
+                        <script type='text/javascript'>
+                        window.parent.CKEDITOR.tools.callFunction({}, '', '{}');
+                        </script>""".format(
+                            ck_func_num, error_msg
+                        )
+                    )
+                else:
+                    # Modern JSON format
+                    return JsonResponse({
+                        "uploaded": 0,
+                        "error": {
+                            "message": error_msg
+                        }
+                    }, status=400)
+            
+            # Generate filepath and save
+            filepath = get_upload_filename(uploaded_file.name, request)
+            saved_path = filewrapper.save_as(filepath)
+            
+            # Track the upload
+            # saved_path is relative to media root (e.g., "uploads/2024/01/15/image.jpg")
+            try:
+                track_upload(saved_path, user=request.user if request.user.is_authenticated else None)
+            except Exception as e:
+                # Log tracking error but don't fail the upload
+                logger.warning(f"Failed to track upload {saved_path}: {str(e)}")
+            
+            # Get the URL for the uploaded file
+            url = utils.get_media_url(saved_path)
+            
+            # Ensure URL is absolute (CKEditor needs absolute URLs)
+            if not url.startswith('http'):
+                # Use request to build absolute URL
+                url = request.build_absolute_uri(url)
+            
             _, filename = os.path.split(saved_path)
-            retdata = {"url": url, "uploaded": "1", "fileName": filename}
-            return JsonResponse(retdata)
+            
+            if ck_func_num:
+                # Legacy format for old CKEditor (JavaScript callback)
+                return HttpResponse(
+                    """
+                    <script type='text/javascript'>
+                        window.parent.CKEDITOR.tools.callFunction({}, '{}');
+                    </script>""".format(
+                        ck_func_num, url
+                    )
+                )
+            else:
+                # Modern JSON format for CKEditor 6.7.0+
+                return JsonResponse({
+                    "uploaded": 1,
+                    "fileName": filename,
+                    "url": url
+                })
+                
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(f"CKEditor upload error: {str(e)}", exc_info=True)
+            
+            error_msg = f"Upload failed: {str(e)}"
+            
+            # Check if it's the old format
+            ck_func_num = request.GET.get("CKEditorFuncNum")
+            if ck_func_num:
+                ck_func_num = escape(ck_func_num)
+                return HttpResponse(
+                    """
+                    <script type='text/javascript'>
+                    window.parent.CKEDITOR.tools.callFunction({}, '', '{}');
+                    </script>""".format(
+                        ck_func_num, error_msg
+                    )
+                )
+            else:
+                # Modern JSON format with error
+                return JsonResponse({
+                    "uploaded": 0,
+                    "error": {
+                        "message": error_msg
+                    }
+                }, status=500)
 
