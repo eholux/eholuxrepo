@@ -143,8 +143,10 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     
     # Always cleanup unused uploads (for both new and edited instances)
     # This handles cases where images were uploaded but removed before saving
+    # Pass old_instance info to help determine if this is a new instance
+    is_new_instance = old_instance is None
     try:
-        cleanup_unused_uploads(current_image_paths, model_name, instance_id)
+        cleanup_unused_uploads(current_image_paths, model_name, instance_id, is_new_instance=is_new_instance)
     except Exception as e:
         # Log error but don't fail the save
         logger.warning(f"Failed to cleanup unused uploads: {str(e)}")

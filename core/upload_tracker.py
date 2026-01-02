@@ -106,7 +106,7 @@ def mark_upload_as_used(file_path, model_name, instance_id):
         uploads.exclude(pk=upload.pk).delete()
 
 
-def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
+def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, is_new_instance=False):
     """
     Clean up uploads that were tracked but not used in ANY product/blog.
     Deletes orphaned files with a grace period to avoid deleting files that are still being edited.
@@ -120,6 +120,7 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
         referenced_paths: Set of file paths from the current instance being saved
         model_name: Name of the model being saved (optional)
         instance_id: ID of the instance being saved (optional)
+        is_new_instance: Whether this is a new instance being created (True) or existing instance being edited (False)
     """
     from datetime import timedelta
     from django.utils import timezone
@@ -188,19 +189,31 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
         # Check if upload is referenced anywhere
         if upload_path not in normalized_all_referenced:
             # Upload is not in any saved content - it's orphaned
-            # Check if it's in the current content being saved (for grace period logic)
+            # Check if it's in the current content being saved
             is_in_current_content = upload_path in normalized_referenced
             
+            # For new instances: if upload is not in current content, it was definitely deleted
+            # Delete it immediately (no grace period needed - we know it's orphaned)
+            # 
+            # For existing instances: apply grace period only if upload is in current content
+            # If upload is NOT in current content, it was deleted, so delete it immediately
+            
             # Only apply grace period if:
-            # 1. Upload is very recent (< 5 minutes) AND
-            # 2. Upload is in the current content being saved (user might still be editing)
-            # Otherwise, delete it immediately (it's definitely orphaned)
-            if upload.uploaded_at >= grace_period and is_in_current_content:
-                # Very recent upload that's in current content - might still be editing, keep it
+            # 1. This is an EXISTING instance (not new) AND
+            # 2. Upload is very recent (< 5 minutes) AND
+            # 3. Upload is in the current content being saved (user might still be editing)
+            # 
+            # For new instances OR uploads not in current content: delete immediately
+            # This handles: upload → delete from editor → save (for both new and existing instances)
+            if not is_new_instance and upload.uploaded_at >= grace_period and is_in_current_content:
+                # Existing instance, very recent upload that's in current content - might still be editing, keep it
                 continue
             
             # This upload is truly orphaned - delete it immediately
-            # (either not in current content, or old enough to be safe to delete)
+            # Reasons:
+            # - New instance and upload not in current content (was deleted) ← This is the key case!
+            # - Existing instance but upload not in current content (was deleted)
+            # - Upload is old enough to be safe to delete
             if delete_file_from_storage(upload.file_path):
                 deleted_count += 1
             # Delete the tracking record
