@@ -130,16 +130,10 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     # Find orphaned images (in old but not in current)
     orphaned_paths = old_image_paths - current_image_paths
     
-    # Mark used uploads as used (for both new and edited instances)
-    model_name = model_instance.__class__.__name__
-    instance_id = model_instance.pk
-    for path in current_image_paths:
-        if path.startswith('uploads/'):
-            try:
-                mark_upload_as_used(path, model_name, instance_id)
-            except Exception as e:
-                # Log error but don't fail the save
-                logger.warning(f"Failed to mark upload as used: {path} - {str(e)}")
+    # Note: We no longer mark uploads as "used" and keep them in database
+    # Instead, we delete tracking records immediately when images are saved
+    # The HTML content is the source of truth - we can extract images from it anytime
+    # This keeps the database clean and avoids bulk accumulation
     
     # Always cleanup unused uploads (for both new and edited instances)
     # This handles cases where images were uploaded but removed before saving
@@ -172,17 +166,12 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     for path in orphaned_paths:
         delete_file_from_storage(path)
         
-        # Also unmark tracking if this upload was tracked
+        # Delete tracking record if it exists (image was removed from content)
         if path.startswith('uploads/'):
             from .models import CkeditorUpload
             try:
                 upload = CkeditorUpload.objects.get(file_path=path)
-                if upload.is_used and upload.used_in_id == instance_id:
-                    # This upload was used in this instance but is now removed
-                    upload.is_used = False
-                    upload.used_in_model = ''
-                    upload.used_in_id = None
-                    upload.save()
+                upload.delete()  # Delete tracking record - image is already deleted from R2
             except CkeditorUpload.DoesNotExist:
                 pass
     

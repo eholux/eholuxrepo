@@ -213,21 +213,14 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                 except CkeditorUpload.DoesNotExist:
                     pass  # Record doesn't exist, that's fine
             else:
-                # Upload IS in the current blog's HTML - mark it as used
+                # Upload IS in the current blog's HTML - delete tracking record immediately
+                # We don't need to keep used records - the HTML content is the source of truth
+                # If we need to check if an image is used, we can extract it from HTML
                 try:
                     upload_record = CkeditorUpload.objects.get(file_path=upload_path)
-                    upload_record.is_used = True
-                    upload_record.used_in_model = model_name
-                    upload_record.used_in_id = instance_id
-                    upload_record.save()
+                    upload_record.delete()  # Delete immediately - no need to keep it
                 except CkeditorUpload.DoesNotExist:
-                    # Create tracking record as used
-                    CkeditorUpload.objects.create(
-                        file_path=upload_path,
-                        is_used=True,
-                        used_in_model=model_name,
-                        used_in_id=instance_id,
-                    )
+                    pass  # Record doesn't exist, that's fine
         
         # Return early for new instances (we've handled the cleanup)
         return deleted_count
@@ -267,23 +260,10 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
             # Delete the tracking record
             upload.delete()
     
-    # Also check used uploads that are no longer referenced
-    # This handles cases where images were saved, then removed from content
-    # Only check uploads that were used in the current instance (more efficient)
-    if model_name and instance_id:
-        # Check uploads that were used in this specific instance
-        instance_used_uploads = CkeditorUpload.objects.filter(
-            is_used=True,
-            used_in_model=model_name,
-            used_in_id=instance_id
-        )
-        for upload in instance_used_uploads:
-            if upload.file_path not in all_referenced_paths:
-                # This upload was used in this instance but is no longer referenced - delete it
-                if delete_file_from_storage(upload.file_path):
-                    deleted_count += 1
-                # Delete the tracking record
-                upload.delete()
+    # Note: We don't need to check used uploads anymore because:
+    # 1. We already detect removed images by comparing old vs new HTML content (in cleanup_orphaned_images)
+    # 2. Used records are deleted immediately when images are saved (no need to keep them)
+    # 3. The HTML content is the source of truth - we can extract images from it anytime
     
     return deleted_count
 
@@ -293,26 +273,14 @@ def cleanup_old_tracking_records():
     Clean up old tracking records to keep the database clean.
     This runs automatically on every product/blog save.
     
-    Deletes:
-    - Used records older than 7 days (file stays in R2, just removes tracking record)
-    - Unused records are deleted immediately when orphaned (handled in cleanup_unused_uploads)
+    Note: Used records are now deleted immediately when images are saved,
+    so this function is mainly for cleaning up any orphaned unused records
+    that might have been missed (safety net).
     """
-    from datetime import timedelta
-    from django.utils import timezone
+    # Used records are deleted immediately when images are saved
+    # Unused records are deleted immediately when they become orphaned
+    # So there's nothing to clean up here anymore
+    # This function is kept for backwards compatibility but does nothing
     
-    cutoff = timezone.now() - timedelta(days=7)
-    
-    # Delete old used records (older than 7 days)
-    # These are safe to delete - the file is already used and saved in a product/blog
-    # We only delete the tracking record, the file stays in R2
-    deleted_used = CkeditorUpload.objects.filter(
-        is_used=True,
-        uploaded_at__lt=cutoff
-    ).delete()[0]
-    
-    # Unused records are now deleted immediately when they become orphaned
-    # (handled in cleanup_unused_uploads function)
-    # No need to wait 30 days - they're deleted right away
-    
-    return deleted_used, 0
+    return 0, 0
 
