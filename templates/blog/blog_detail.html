@@ -7,9 +7,6 @@
 <div class="blog-detail-page">
     <div class="container">
         <article class="blog-post">
-            {% if post.thumbnail %}
-                <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" class="blog-thumbnail">
-            {% endif %}
             <h1>{{ post.title }}</h1>
             <p class="blog-meta">{{ post.created_at|date:"d.m.Y" }}</p>
             {% if post.short_description %}

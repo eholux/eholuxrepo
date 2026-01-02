@@ -1372,6 +1372,8 @@ a.btn-primary * {
     overflow-wrap: break-word;
     max-width: 100%;
     box-sizing: border-box;
+    padding-bottom: 40px;
+    margin-bottom: 40px;
 }
 
 .blog-detail-page {
@@ -1392,12 +1394,19 @@ a.btn-primary * {
     box-sizing: border-box;
     overflow-wrap: break-word;
     word-wrap: break-word;
+    padding-bottom: 40px;
+    margin-bottom: 40px;
 }
 
 .blog-content img {
     max-width: 100%;
     height: auto;
     margin: 20px 0;
+    display: block;
+}
+
+.blog-content img:last-child {
+    margin-bottom: 40px;
 }
 
 /* Contact Page */
