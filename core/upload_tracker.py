@@ -165,17 +165,42 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
     deleted_count = 0
     
     # Clean up unused uploads (never saved in any content)
-    # Only delete if they're older than grace period (5 minutes)
     # This handles: images uploaded but removed from CKEditor before saving
-    unused_uploads = CkeditorUpload.objects.filter(
-        is_used=False,
-        uploaded_at__lt=grace_period  # Only check uploads older than 5 minutes
-    )
+    # We check all unused uploads, but apply grace period only to very recent ones
+    # that might be part of an active editing session
+    unused_uploads = CkeditorUpload.objects.filter(is_used=False)
     
     for upload in unused_uploads:
-        # Check if this upload is used in ANY product/blog
-        if upload.file_path not in all_referenced_paths:
-            # This upload is truly orphaned - delete it
+        # Normalize the upload path for comparison
+        upload_path = upload.file_path
+        if upload_path.startswith('/'):
+            upload_path = upload_path[1:]
+        
+        # Check if this upload is used in ANY product/blog (including current content being saved)
+        # Normalize all paths in all_referenced_paths for comparison
+        normalized_all_referenced = set()
+        for path in all_referenced_paths:
+            normalized_path = path
+            if normalized_path.startswith('/'):
+                normalized_path = normalized_path[1:]
+            normalized_all_referenced.add(normalized_path)
+        
+        # Check if upload is referenced anywhere
+        if upload_path not in normalized_all_referenced:
+            # Upload is not in any saved content - it's orphaned
+            # Check if it's in the current content being saved (for grace period logic)
+            is_in_current_content = upload_path in normalized_referenced
+            
+            # Only apply grace period if:
+            # 1. Upload is very recent (< 5 minutes) AND
+            # 2. Upload is in the current content being saved (user might still be editing)
+            # Otherwise, delete it immediately (it's definitely orphaned)
+            if upload.uploaded_at >= grace_period and is_in_current_content:
+                # Very recent upload that's in current content - might still be editing, keep it
+                continue
+            
+            # This upload is truly orphaned - delete it immediately
+            # (either not in current content, or old enough to be safe to delete)
             if delete_file_from_storage(upload.file_path):
                 deleted_count += 1
             # Delete the tracking record
