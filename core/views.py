@@ -7,10 +7,18 @@ from django.core.mail import EmailMessage
 from django.utils.translation import gettext_lazy as _
 from .models import UserEmail
 import re
+import logging
+
+logger = logging.getLogger('core')
 
 
 def home(request):
-    return render(request, 'core/home.html')
+    try:
+        logger.info('Home view called')
+        return render(request, 'core/home.html')
+    except Exception as e:
+        logger.error(f'Error in home view: {str(e)}', exc_info=True)
+        raise
 
 
 @csrf_protect

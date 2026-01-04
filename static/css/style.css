@@ -787,6 +787,19 @@ a.btn-primary * {
     text-align: center;
 }
 
+.footer-right a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tesla-logo {
+    height: 20px;
+    width: auto;
+    vertical-align: middle;
+    display: inline-block;
+}
+
 .footer-social {
     display: flex;
     justify-content: center;
