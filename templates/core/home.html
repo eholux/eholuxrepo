@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
+
 {% block content %}
 <div class="home-hero">
     <div class="container">

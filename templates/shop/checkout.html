@@ -3,6 +3,7 @@
 {% load shop_filters %}
 
 {% block title %}Plaćanje - EhoLux{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:checkout' %}">{% endblock %}
 
 {% block content %}
 <div class="checkout-page">

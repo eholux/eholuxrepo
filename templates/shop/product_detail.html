@@ -2,7 +2,9 @@
 {% load static %}
 {% load shop_filters %}
 
-{% block title %}{{ product.title }} - EhoLux{% endblock %}
+{% block title %}{{ product.meta_title|default:product.title }} - EhoLux{% endblock %}
+{% block meta_description %}{{ product.meta_description|default:"EhoLux - Ugradnja i prodaja akustičnih panela" }}{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}">{% endblock %}
 
 {% block content %}
 <div class="product-detail-page">

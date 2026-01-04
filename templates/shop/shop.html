@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}Prodavnica - EhoLux{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}">{% endblock %}
 
 {% block content %}
 <div class="shop-page">

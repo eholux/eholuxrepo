@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}Blogovi - EhoLux{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:blog_list' %}">{% endblock %}
 
 {% block content %}
 <div class="blog-list-page">
