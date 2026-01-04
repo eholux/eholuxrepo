@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.utils.translation import gettext_lazy as _
 from .models import UserEmail
 import re
@@ -65,13 +65,16 @@ Email: {email}
 Poruka:
 {message}
 """
-                send_mail(
+                # Use EmailMessage to set Reply-To header
+                # This allows admin to click Reply and have the user's email in the "To" field
+                email = EmailMessage(
                     subject=f'Nova poruka sa kontakt forme - {name} {surname}',
-                    message=email_body,
+                    body=email_body,
                     from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.CONTACT_EMAIL],
-                    fail_silently=False,
+                    to=[settings.CONTACT_EMAIL],
+                    reply_to=[email],  # Set Reply-To to user's email
                 )
+                email.send(fail_silently=False)
                 messages.success(request, _('Poruka je uspešno poslata. Kontaktiraćemo vas uskoro.'))
                 return redirect('core:contact')
             except Exception as e:
