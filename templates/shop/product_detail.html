@@ -188,6 +188,19 @@
     </div>
 </div>
 
+{% if product_images %}
+<script type="application/json" id="product-images-data">
+[
+    {% for img in product_images %}
+    {
+        "url": "{{ img.url|escapejs }}",
+        "alt": "{{ img.alt|escapejs }}"
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+]
+</script>
+{% endif %}
+
 <script>
 // ============================================
 // NEW CAROUSEL IMPLEMENTATION - v2.0
@@ -195,15 +208,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
-    // Product images data
-    const productImages = [
-        {% for img in product_images %}
-        {
-            url: '{{ img.url }}',
-            alt: '{{ img.alt|escapejs }}'
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+    // Product images data - loaded from JSON script tag
+    let productImages = [];
+    const productImagesDataEl = document.getElementById('product-images-data');
+    if (productImagesDataEl) {
+        try {
+            productImages = JSON.parse(productImagesDataEl.textContent);
+        } catch (e) {
+            console.error('Error parsing product images data:', e);
+            productImages = [];
+        }
+    }
     
     if (productImages.length === 0) {
         console.log('No product images found');
