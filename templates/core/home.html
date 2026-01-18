@@ -465,6 +465,127 @@
     .stagger-4 { transition-delay: 0.4s; }
     .stagger-5 { transition-delay: 0.5s; }
 
+    /* Image Carousel Styles */
+    .image-carousel-container {
+        background: var(--white);
+        padding: 60px 20px;
+        width: 100%;
+    }
+
+    .image-carousel {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        height: 450px;
+        margin: 0 auto;
+        overflow: hidden;
+        aspect-ratio: 2 / 1;
+    }
+
+    @media (max-width: 575.98px) {
+        .image-carousel {
+            height: 200px;
+            aspect-ratio: 2 / 1;
+        }
+    }
+
+    @media (min-width: 576px) and (max-width: 767.98px) {
+        .image-carousel {
+            height: 250px;
+            aspect-ratio: 2 / 1;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        .image-carousel {
+            max-width: 700px;
+            height: 350px;
+            aspect-ratio: 2 / 1;
+        }
+    }
+
+    .image-carousel-item {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60%;
+        height: 100%;
+        transform: translate(-50%, -50%);
+        transition: all 0.5s ease;
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .image-carousel-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        display: block;
+    }
+
+    .image-carousel-item.active {
+        opacity: 1;
+        z-index: 3;
+    }
+
+    .image-carousel-item.prev {
+        left: 20%;
+        width: 35%;
+        transform: translate(-50%, -50%) scale(0.75);
+        filter: blur(4px);
+        opacity: 0.6;
+        z-index: 2;
+    }
+
+    .image-carousel-item.next {
+        left: 80%;
+        width: 35%;
+        transform: translate(-50%, -50%) scale(0.75);
+        filter: blur(4px);
+        opacity: 0.6;
+        z-index: 2;
+    }
+
+    .carousel-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: #000;
+        padding: 10px 15px;
+        cursor: pointer;
+        z-index: 10;
+        border: 1px solid #000;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        user-select: none;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-arrow:hover {
+        background: #000;
+        color: #fff;
+    }
+
+    .carousel-arrow-left {
+        left: 10px;
+    }
+
+    .carousel-arrow-right {
+        right: 10px;
+    }
+
+    @media (max-width: 767.98px) {
+        .carousel-arrow {
+            font-size: 1.25rem;
+            padding: 6px 10px;
+        }
+        .carousel-arrow-left { left: 5px; }
+        .carousel-arrow-right { right: 5px; }
+    }
+
     /* Mobile Optimizations */
     @media (max-width: 767px) {
         .home-hero {
@@ -512,6 +633,50 @@
             <p>Pravilno rešenje za akustiku vašeg prostora.</p>
             <a href="{% url 'shop:shop' %}" class="btn btn-primary">Pogledaj proizvode</a>
             <p class="hero-guarantee">Garantujemo brzu i efikasnu ugradnju i kvalitetne akustične panele.</p>
+        </div>
+    </section>
+
+    <!-- Image Carousel Section -->
+    <section class="image-carousel-container">
+        <div class="image-carousel">
+            <div class="image-carousel-item" data-index="0">
+                <img src="{% static 'images/carousel-image-1.webp' %}" alt="Image 1">
+            </div>
+            <div class="image-carousel-item" data-index="1">
+                <img src="{% static 'images/carousel-image-2.webp' %}" alt="Image 2">
+            </div>
+            <div class="image-carousel-item" data-index="2">
+                <img src="{% static 'images/carousel-image-3.webp' %}" alt="Image 3">
+            </div>
+            <div class="image-carousel-item" data-index="3">
+                <img src="{% static 'images/carousel-image-4.webp' %}" alt="Image 4">
+            </div>
+            <div class="image-carousel-item" data-index="4">
+                <img src="{% static 'images/carousel-image-5.webp' %}" alt="Image 5">
+            </div>
+            <div class="image-carousel-item" data-index="5">
+                <img src="{% static 'images/carousel-image-6.webp' %}" alt="Image 6">
+            </div>
+            <div class="image-carousel-item" data-index="6">
+                <img src="{% static 'images/carousel-image-7.webp' %}" alt="Image 7">
+            </div>
+            <div class="image-carousel-item" data-index="7">
+                <img src="{% static 'images/carousel-image-8.webp' %}" alt="Image 8">
+            </div>
+            <div class="image-carousel-item" data-index="8">
+                <img src="{% static 'images/carousel-image-9.webp' %}" alt="Image 9">
+            </div>
+            <div class="image-carousel-item" data-index="9">
+                <img src="{% static 'images/carousel-image-10.webp' %}" alt="Image 10">
+            </div>
+            <div class="image-carousel-item" data-index="10">
+                <img src="{% static 'images/carousel-image-11.webp' %}" alt="Image 11">
+            </div>
+            <div class="image-carousel-item" data-index="11">
+                <img src="{% static 'images/carousel-image-12.webp' %}" alt="Image 12">
+            </div>
+            <a href="#" class="carousel-arrow carousel-arrow-left" onclick="event.preventDefault(); carouselPrev();">&#10094;</a>
+            <a href="#" class="carousel-arrow carousel-arrow-right" onclick="event.preventDefault(); carouselNext();">&#10095;</a>
         </div>
     </section>
 
@@ -896,5 +1061,66 @@
         });
     });
 })();
+
+// Image Carousel
+(function() {
+    let carouselIndex = 0;
+    let carouselItems = [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const carousel = document.querySelector(".image-carousel");
+        if (!carousel) return;
+
+        carouselItems = Array.from(carousel.querySelectorAll(".image-carousel-item"));
+        if (carouselItems.length === 0) return;
+
+        function updateCarousel() {
+            carouselItems.forEach(function(item) {
+                item.classList.remove("active", "prev", "next");
+            });
+
+            const total = carouselItems.length;
+            const current = carouselIndex % total;
+            const prevIndex = (carouselIndex - 1 + total) % total;
+            const nextIndex = (carouselIndex + 1) % total;
+
+            carouselItems[current].classList.add("active");
+            carouselItems[prevIndex].classList.add("prev");
+            carouselItems[nextIndex].classList.add("next");
+        }
+
+        window.carouselNext = function() {
+            carouselIndex = (carouselIndex + 1) % carouselItems.length;
+            updateCarousel();
+        };
+
+        window.carouselPrev = function() {
+            carouselIndex = (carouselIndex - 1 + carouselItems.length) % carouselItems.length;
+            updateCarousel();
+        };
+
+        // Initialize
+        updateCarousel();
+
+        // Touch swipe
+        let touchStartX = 0;
+        carousel.addEventListener("touchstart", function(e) {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        carousel.addEventListener("touchend", function(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    carouselNext();
+                } else {
+                    carouselPrev();
+                }
+            }
+        }, { passive: true });
+    });
+})();
+
 </script>
 {% endblock %}
