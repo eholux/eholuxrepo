@@ -562,11 +562,20 @@
         text-decoration: none;
         user-select: none;
         transition: all 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
     }
 
+
     .carousel-arrow:hover {
-        background: #000;
-        color: #fff;
+        transform: translateY(-50%) scale(1);
+    }
+
+    .carousel-arrow:active,
+    .carousel-arrow:focus {
+        background: rgba(255, 255, 255, 0.8);
+        color: #000;
+        outline: none;
+        transform: translateY(-50%) scale(1);
     }
 
     .carousel-arrow-left {
@@ -581,9 +590,24 @@
         .carousel-arrow {
             font-size: 1.25rem;
             padding: 6px 10px;
+            transform: translateY(-50%);
         }
         .carousel-arrow-left { left: 5px; }
         .carousel-arrow-right { right: 5px; }
+        
+        /* Disable hover effects on mobile */
+        .carousel-arrow:hover {
+            background: rgba(255, 255, 255, 0.8);
+            color: #000;
+            transform: translateY(-50%);
+        }
+        
+        /* Prevent growth/scale on click */
+        .carousel-arrow:active {
+            transform: translateY(-50%) scale(1);
+            background: rgba(255, 255, 255, 0.8);
+            color: #000;
+        }
     }
 
     /* Mobile Optimizations */
