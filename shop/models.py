@@ -33,7 +33,7 @@ class ProductDimension(models.Model):
     """Dimensions for a product (length, width, height in centimeters)"""
     product = models.ForeignKey('Product', related_name='dimensions', on_delete=models.CASCADE)
     length = models.DecimalField(_('Dužina (cm)'), max_digits=10, decimal_places=2)
-    width = models.DecimalField(_('Dubina (cm)'), max_digits=10, decimal_places=2)
+    width = models.DecimalField(_('Debljina (cm)'), max_digits=10, decimal_places=2)
     height = models.DecimalField(_('Visina (cm)'), max_digits=10, decimal_places=2)
     price = models.DecimalField(_('Cena (RSD)'), max_digits=10, decimal_places=2)
     order = models.PositiveIntegerField(_('Redosled'), default=0)
