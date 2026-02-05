@@ -9,8 +9,8 @@ class BlogPostSitemap(Sitemap):
     priority = 0.7
     
     def items(self):
-        # Only include published blog posts
-        return BlogPost.objects.filter(is_published=True)
+        # Include all blog posts
+        return BlogPost.objects.all()
     
     def lastmod(self, obj):
         return obj.updated_at

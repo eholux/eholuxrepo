@@ -3,7 +3,7 @@ from .models import BlogPost
 
 
 def blog_list(request):
-    posts = BlogPost.objects.filter(is_published=True)
+    posts = BlogPost.objects.all()
     context = {
         'posts': posts,
     }
@@ -11,8 +11,8 @@ def blog_list(request):
 
 
 def blog_detail(request, slug):
-    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
-    recent_posts = BlogPost.objects.filter(is_published=True).exclude(id=post.id)[:5]
+    post = get_object_or_404(BlogPost, slug=slug)
+    recent_posts = BlogPost.objects.all().exclude(id=post.id)[:5]
     
     context = {
         'post': post,

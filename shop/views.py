@@ -34,7 +34,7 @@ def product_detail(request, slug):
     
     # Get related blog posts (for internal linking/SEO)
     from blog.models import BlogPost
-    related_blog_posts = BlogPost.objects.filter(is_published=True)[:3]
+    related_blog_posts = BlogPost.objects.all()[:3]
     
     # Prepare all product images (thumbnail + gallery) for carousel
     product_images = []
