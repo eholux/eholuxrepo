@@ -89,3 +89,8 @@ Poruka:
                 messages.error(request, _('Došlo je do greške pri slanju poruke. Molimo pokušajte ponovo.'))
 
     return render(request, 'core/contact.html')
+
+
+def faq(request):
+    """FAQ page with comprehensive questions and answers"""
+    return render(request, 'core/faq.html')

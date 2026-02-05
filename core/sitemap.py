@@ -9,7 +9,7 @@ class StaticViewSitemap(Sitemap):
     
     def items(self):
         # Return list of view names
-        return ['core:home', 'core:contact', 'shop:shop', 'blog:blog_list']
+        return ['core:home', 'core:contact', 'core:faq', 'shop:shop', 'blog:blog_list']
     
     def location(self, item):
         return reverse(item)

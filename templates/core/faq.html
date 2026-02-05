@@ -1,0 +1,403 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Često Postavljana Pitanja - Akustični Paneli i Zvučna Izolacija | EhoLux{% endblock %}
+{% block meta_description %}Najčešća pitanja o akustičnim panelima, zvučnoj izolaciji, cenama i ugradnji. Saznajte sve o najboljim i najefikasnijim rešenjima za akustiku prostora.{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:faq' %}">{% endblock %}
+
+{# Open Graph Override #}
+{% block og_title %}<meta property="og:title" content="Često Postavljana Pitanja - Akustični Paneli i Zvučna Izolacija | EhoLux">{% endblock %}
+{% block og_description %}<meta property="og:description" content="Najčešća pitanja o akustičnim panelima, zvučnoj izolaciji, cenama i ugradnji. Saznajte sve o najboljim i najefikasnijim rešenjima za akustiku prostora.">{% endblock %}
+
+{# Twitter Card Override #}
+{% block twitter_title %}<meta name="twitter:title" content="Često Postavljana Pitanja - Akustični Paneli | EhoLux">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="Najčešća pitanja o akustičnim panelima, zvučnoj izolaciji, cenama i ugradnji.">{% endblock %}
+
+{# FAQPage Schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Šta su akustični paneli i kako funkcionišu?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Akustični paneli su specijalizovani materijali dizajnirani da kontrolišu ponašanje zvuka u prostoriji. Oni apsorbuju zvuk, smanjuju odjek, poboljšavaju jasnoću govora i stabilizuju stereo sliku. Razlikuju se po debljini: tanki paneli (5 cm) kontrolišu srednje i visoke frekvencije, dok bass trap paneli (10, 15, 20 cm) rešavaju probleme niskih frekvencija."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Koja je razlika između akustičnih panela i zvučne izolacije?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Akustični paneli kontrolišu zvuk unutar prostora (smanjuju odjek, poboljšavaju jasnoću), dok zvučna izolacija sprečava prolazak zvuka kroz zidove, plafon i pod ka drugim prostorijama ili spolja. Za kompletan akustički tretman često je potrebna kombinacija oba rešenja."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kolika je cena akustičnih panela?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Cena akustičnih panela zavisi od dimenzija, debljine, obloge, boje i toga da li se radi izrada po meri. Za preciznu ponudu, kontaktirajte nas sa informacijama o vašem prostoru i problemima koje želite da rešite."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kako izabrati pravi tip akustičnog panela?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Za prostore koji odzvanjaju ili zvuče mutno, počnite sa tankim panelima (5 cm) za zidove i plafon. Ako imate probleme sa basom (tutnjanje, boom efekat), potrebni su bass trap paneli (10-20 cm) za uglove i spojeve. Najbolji rezultat se postiže kombinovanjem različitih tipova panela prilagođenih vašem prostoru."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Šta je najbolja zvučna izolacija zida?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Najbolja zvučna izolacija zida zavisi od konstrukcije zida i nivoa izolacije koji želite postići. Efikasna zvučna izolacija zida uključuje kombinaciju materijala koji blokiraju i apsorbuju zvuk. Kontaktirajte nas za analizu vašeg prostora i preporuku najefikasnijeg rešenja."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Postoje li dekorativna rešenja za zvučnu izolaciju?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Da, nudimo dekorativnu zvučnu izolaciju koja kombinuje funkcionalnost i estetiku. Bass Trap Lux paneli, na primer, pružaju kontrolu niskih frekvencija uz premium, dekorativan izgled. Idealni su za dnevne boravke, studije sa vidljivim panelima i reprezentativne prostore gde je važan i zvuk i dizajn."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Za koje prostore su namenjeni akustični paneli?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Akustični paneli su namenjeni za različite tipove prostora: muzičke i home studio prostore, podcast i voice-over sobe, kancelarije i open space prostore, kućne bioskope, dnevne sobe i stambene prostore, te učionice i sale. Svaki prostor gde je kvalitet zvuka važan može imati koristi od akustičnih panela."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Kako se postavljaju akustični paneli?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Postavka akustičnih panela zavisi od tipa prostora i problema koji rešavate. Pomažemo pri odabiru, savetujemo oko rasporeda i izrađujemo panele po meri prostora. Kontaktirajte nas za besplatne savete o optimalnom postavljanju panela u vašem prostoru."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Šta je najefikasnija zvučna izolacija?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Najefikasnija zvučna izolacija kombinuje više slojeva materijala koji blokiraju zvuk, uz pravilnu instalaciju. Efikasnost zavisi od konstrukcije prostora i nivoa izolacije koji želite postići. Za najbolje rezultate, preporučujemo profesionalnu analizu prostora i prilagođeno rešenje."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Mogu li akustični paneli biti dekorativni?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Da, akustični paneli mogu biti i funkcionalni i dekorativni. Nudimo širok izbor boja, različite obloge i premium modele kao što su Bass Trap Lux paneli koji kombinuju kontrolu zvuka sa estetskim izgledom. Panele možemo prilagoditi vašem enterijeru."
+      }
+    }
+  ]
+}
+</script>
+
+{% block extra_css %}
+<style>
+    .faq-page {
+        padding: 60px 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .faq-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    
+    .faq-header h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+    }
+    
+    .faq-header p {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+    
+    .faq-category {
+        margin-bottom: 50px;
+    }
+    
+    .faq-category-title {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        font-weight: 600;
+        margin-bottom: 30px;
+        color: var(--text-dark);
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--accent);
+    }
+    
+    .faq-item {
+        background: var(--white);
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .faq-item:hover {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .faq-question {
+        padding: 20px 25px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        font-weight: 600;
+        color: var(--text-dark);
+        user-select: none;
+        transition: background-color 0.3s ease;
+    }
+    
+    .faq-question:hover {
+        background-color: var(--light-gray);
+    }
+    
+    .faq-question.active {
+        background-color: var(--light-gray);
+    }
+    
+    .faq-icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+        margin-left: 15px;
+    }
+    
+    .faq-question.active .faq-icon {
+        transform: rotate(180deg);
+    }
+    
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 25px;
+    }
+    
+    .faq-answer.active {
+        max-height: 500px;
+        padding: 0 25px 20px 25px;
+    }
+    
+    .faq-answer-content {
+        color: var(--text-light);
+        line-height: 1.8;
+        font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+    }
+    
+    .faq-cta {
+        background: linear-gradient(135deg, var(--dark-gray) 0%, var(--accent) 100%);
+        color: var(--white);
+        padding: 40px 20px;
+        text-align: center;
+        border-radius: 16px;
+        margin-top: 60px;
+    }
+    
+    .faq-cta h2 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        margin-bottom: 15px;
+    }
+    
+    .faq-cta p {
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        margin-bottom: 25px;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="faq-page">
+    <div class="faq-header">
+        <h1>Često Postavljana Pitanja</h1>
+        <p>Pronađite odgovore na najčešća pitanja o <strong>akustičnim panelima</strong>, <strong>zvučnoj izolaciji</strong> i našim rešenjima za akustiku prostora.</p>
+    </div>
+
+    <div class="faq-category">
+        <h2 class="faq-category-title">Akustični Paneli - Opšte Informacije</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Šta su akustični paneli i kako funkcionišu?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Akustični paneli</strong> su specijalizovani materijali dizajnirani da kontrolišu ponašanje zvuka u prostoriji. Oni apsorbuju zvuk, smanjuju odjek, poboljšavaju jasnoću govora i stabilizuju stereo sliku. Razlikuju se po debljini: tanki paneli (5 cm) kontrolišu srednje i visoke frekvencije, dok bass trap paneli (10, 15, 20 cm) rešavaju probleme niskih frekvencija.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Koja je razlika između akustičnih panela i zvučne izolacije?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Akustični paneli</strong> kontrolišu zvuk unutar prostora (smanjuju odjek, poboljšavaju jasnoću), dok <strong>zvučna izolacija</strong> sprečava prolazak zvuka kroz zidove, plafon i pod ka drugim prostorijama ili spolja. Za kompletan akustički tretman često je potrebna kombinacija oba rešenja.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Kako izabrati pravi tip akustičnog panela?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Za prostore koji odzvanjaju ili zvuče mutno, počnite sa tankim <strong>akustičnim panelima</strong> (5 cm) za zidove i plafon. Ako imate probleme sa basom (tutnjanje, boom efekat), potrebni su bass trap paneli (10-20 cm) za uglove i spojeve. Najbolji rezultat se postiže kombinovanjem različitih tipova panela prilagođenih vašem prostoru.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Za koje prostore su namenjeni akustični paneli?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Akustični paneli</strong> su namenjeni za različite tipove prostora: muzičke i home studio prostore, podcast i voice-over sobe, kancelarije i open space prostore, kućne bioskope, dnevne sobe i stambene prostore, te učionice i sale. Svaki prostor gde je kvalitet zvuka važan može imati koristi od akustičnih panela.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Kako se postavljaju akustični paneli?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Postavka <strong>akustičnih panela</strong> zavisi od tipa prostora i problema koji rešavate. Pomažemo pri odabiru, savetujemo oko rasporeda i izrađujemo panele po meri prostora. Kontaktirajte nas za besplatne savete o optimalnom postavljanju panela u vašem prostoru.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-category">
+        <h2 class="faq-category-title">Zvučna Izolacija</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Šta je najbolja zvučna izolacija zida?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Najbolja zvučna izolacija zida</strong> zavisi od konstrukcije zida i nivoa izolacije koji želite postići. Efikasna <strong>zvučna izolacija zida</strong> uključuje kombinaciju materijala koji blokiraju i apsorbuju zvuk. Kontaktirajte nas za analizu vašeg prostora i preporuku najefikasnijeg rešenja.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Šta je najefikasnija zvučna izolacija?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Najefikasnija zvučna izolacija</strong> kombinuje više slojeva materijala koji blokiraju zvuk, uz pravilnu instalaciju. Efikasnost zavisi od konstrukcije prostora i nivoa izolacije koji želite postići. Za najbolje rezultate, preporučujemo profesionalnu analizu prostora i prilagođeno rešenje.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Postoje li dekorativna rešenja za zvučnu izolaciju?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Da, nudimo <strong>dekorativnu zvučnu izolaciju</strong> koja kombinuje funkcionalnost i estetiku. Bass Trap Lux paneli, na primer, pružaju kontrolu niskih frekvencija uz premium, dekorativan izgled. Idealni su za dnevne boravke, studije sa vidljivim panelima i reprezentativne prostore gde je važan i zvuk i dizajn.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-category">
+        <h2 class="faq-category-title">Cene i Naručivanje</h2>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Kolika je cena akustičnih panela?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <strong>Akustični paneli cena</strong> zavisi od dimenzija, debljine, obloge, boje i toga da li se radi izrada po meri. Za preciznu ponudu, kontaktirajte nas sa informacijama o vašem prostoru i problemima koje želite da rešite.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                <span>Mogu li akustični paneli biti dekorativni?</span>
+                <span class="faq-icon">▼</span>
+            </div>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    Da, <strong>akustični paneli</strong> mogu biti i funkcionalni i dekorativni. Nudimo širok izbor boja, različite obloge i premium modele kao što su Bass Trap Lux paneli koji kombinuju kontrolu zvuka sa estetskim izgledom. Panele možemo prilagoditi vašem enterijeru.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-cta">
+        <h2>Niste pronašli odgovor?</h2>
+        <p>Kontaktirajte nas za besplatne savete o akustičkim panelima i zvučnoj izolaciji</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-primary">Kontaktirajte nas</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleFaq(element) {
+    const faqItem = element.closest('.faq-item');
+    const faqAnswer = faqItem.querySelector('.faq-answer');
+    const isActive = element.classList.contains('active');
+    
+    // Close all other FAQs
+    document.querySelectorAll('.faq-question').forEach(function(q) {
+        if (q !== element) {
+            q.classList.remove('active');
+            q.closest('.faq-item').querySelector('.faq-answer').classList.remove('active');
+        }
+    });
+    
+    // Toggle current FAQ
+    if (isActive) {
+        element.classList.remove('active');
+        faqAnswer.classList.remove('active');
+    } else {
+        element.classList.add('active');
+        faqAnswer.classList.add('active');
+    }
+}
+</script>
+{% endblock %}
