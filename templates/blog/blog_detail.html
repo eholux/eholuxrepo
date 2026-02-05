@@ -6,12 +6,16 @@
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:blog_detail' post.slug %}">{% endblock %}
 
 {# Open Graph Override for Blog Posts #}
+{% block og_title %}<meta property="og:title" content="{{ post.meta_title|default:post.title }} - EhoLux">{% endblock %}
+{% block og_description %}<meta property="og:description" content="{{ post.meta_description|default:'EhoLux - Ugradnja i prodaja akustičnih panela' }}">{% endblock %}
 {% block og_image %}
 <meta property="og:image" content="{% if post.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ post.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
 <meta property="og:type" content="article">
 {% endblock %}
 
 {# Twitter Card Override for Blog Posts #}
+{% block twitter_title %}<meta name="twitter:title" content="{{ post.meta_title|default:post.title }} - EhoLux">{% endblock %}
+{% block twitter_description %}<meta name="twitter:description" content="{{ post.meta_description|default:'EhoLux - Ugradnja i prodaja akustičnih panela' }}">{% endblock %}
 {% block twitter_image %}
 <meta name="twitter:image" content="{% if post.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ post.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
 {% endblock %}
