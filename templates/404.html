@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Stranica nije pronađena (404) - EhoLux{% endblock %}
+{% block meta_description %}Stranica koju tražite nije pronađena. Vratite se na početnu stranicu ili pretražite naše proizvode.{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-page {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .error-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-code {
+        font-size: clamp(4rem, 10vw, 8rem);
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 20px;
+        line-height: 1;
+    }
+    
+    .error-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+    
+    .error-message {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--text-light);
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        min-width: 200px;
+    }
+    
+    .error-links {
+        margin-top: 40px;
+        padding-top: 40px;
+        border-top: 1px solid var(--light-gray);
+    }
+    
+    .error-links h3 {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+    }
+    
+    .error-links ul {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .error-links li a {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+    
+    .error-links li a:hover {
+        color: var(--text-dark);
+        text-decoration: underline;
+    }
+    
+    @media (min-width: 768px) {
+        .error-actions {
+            flex-direction: row;
+            justify-content: center;
+        }
+        
+        .error-links ul {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-content">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Stranica nije pronađena</h1>
+        <p class="error-message">
+            Stranica koju tražite ne postoji ili je premeštena. Možete se vratiti na početnu stranicu ili pretražiti naše proizvode.
+        </p>
+        
+        <div class="error-actions">
+            <a href="{% url 'core:home' %}" class="btn btn-primary">Vrati se na početnu</a>
+            <a href="{% url 'shop:shop' %}" class="btn btn-secondary">Pregledaj proizvode</a>
+        </div>
+        
+        <div class="error-links">
+            <h3>Korisni linkovi:</h3>
+            <ul>
+                <li><a href="{% url 'core:home' %}">Početna</a></li>
+                <li><a href="{% url 'shop:shop' %}">Prodavnica</a></li>
+                <li><a href="{% url 'blog:blog_list' %}">Blog</a></li>
+                <li><a href="{% url 'core:contact' %}">Kontakt</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

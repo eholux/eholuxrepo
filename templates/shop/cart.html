@@ -16,9 +16,9 @@
                     <div class="cart-item">
                         <div class="cart-item-image">
                             {% if item.product.thumbnail %}
-                                <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.title }}">
+                                <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.title }}" loading="lazy">
                             {% elif item.product.images.first %}
-                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.title }}">
+                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.title }}" loading="lazy">
                             {% else %}
                                 <div class="product-placeholder">Nema slike</div>
                             {% endif %}
@@ -34,7 +34,7 @@
                             {% if item.pattern %}
                                 <div class="cart-item-pattern">
                                     <strong>Dezen:</strong>
-                                    <img src="{{ item.pattern.image.url }}" alt="Dezen" style="max-width: 100px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <img src="{{ item.pattern.image.url }}" alt="Dezen" loading="lazy" style="max-width: 100px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
                                 </div>
                             {% endif %}
                         </div>

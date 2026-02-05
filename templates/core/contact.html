@@ -2,7 +2,30 @@
 {% load static %}
 
 {% block title %}Kontakt - EhoLux{% endblock %}
+{% block meta_description %}Kontaktirajte EhoLux za besplatne savete o akustičkim panelima. Email: info@akusticnipanelieholux.com. Pomoć pri odabiru i izradi panela po meri.{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:contact' %}">{% endblock %}
+
+{# ContactPage Schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Kontakt - EhoLux",
+  "description": "Kontaktirajte EhoLux za besplatne savete o akustičkim panelima i zvučnoj izolaciji.",
+  "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'core:contact' %}",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "EhoLux",
+    "email": "info@akusticnipanelieholux.com",
+    "telephone": "+381 60 123 4567",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Novi Sad",
+      "addressCountry": "RS"
+    }
+  }
+}
+</script>
 
 {% block content %}
 <div class="contact-page">

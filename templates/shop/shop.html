@@ -2,7 +2,45 @@
 {% load static %}
 
 {% block title %}Prodavnica - EhoLux{% endblock %}
+{% block meta_description %}Pregledajte našu kolekciju akustičnih panela. Različite dimenzije, debljine i dezeni dostupni po meri vašeg prostora.{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}">{% endblock %}
+
+{# CollectionPage Schema for Shop Listing #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Prodavnica - EhoLux",
+  "description": "Pregledajte našu kolekciju akustičnih panela. Različite dimenzije, debljine i dezeni dostupni po meri vašeg prostora.",
+  "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}",
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      {% for product in products %}
+      {
+        "@type": "ListItem",
+        "position": {{ forloop.counter }},
+        "item": {
+          "@type": "Product",
+          "name": "{{ product.title|escapejs }}",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}"
+        }
+      }{% if not forloop.last %},{% endif %}
+      {% empty %}
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Product",
+          "name": "Nema dostupnih proizvoda",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}"
+        }
+      }
+      {% endfor %}
+    ]
+  }
+}
+</script>
 
 {% block extra_css %}
 <style>
@@ -108,9 +146,9 @@
                 <div class="product-card">
                     <a href="{% url 'shop:product_detail' product.slug %}">
                         {% if product.thumbnail %}
-                            <img src="{{ product.thumbnail.url }}" alt="{{ product.title }}">
+                            <img src="{{ product.thumbnail.url }}" alt="{{ product.title }}" loading="lazy">
                         {% elif product.images.first %}
-                            <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" loading="lazy">
                         {% else %}
                             <div class="product-placeholder">Nema slike</div>
                         {% endif %}

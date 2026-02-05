@@ -1,7 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}EhoLux - Ugradnja i prodaja akustičnih panela{% endblock %}
+{% block meta_description %}EhoLux - Profesionalna ugradnja i prodaja akustičnih panela. Rešenja po meri za studio, kancelarije, konferencijske sale i domove. Poboljšajte akustiku vašeg prostora.{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
+
+{# WebSite Schema with SearchAction #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "EhoLux",
+  "url": "{{ request.scheme }}://{{ request.get_host }}",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:search_products' %}?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 
 {% block extra_css %}
 <style>

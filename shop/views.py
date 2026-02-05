@@ -32,6 +32,10 @@ def product_detail(request, slug):
         is_active=True
     ).exclude(id=product.id)[:4]
     
+    # Get related blog posts (for internal linking/SEO)
+    from blog.models import BlogPost
+    related_blog_posts = BlogPost.objects.filter(is_published=True)[:3]
+    
     # Prepare all product images (thumbnail + gallery) for carousel
     product_images = []
     if product.thumbnail:
@@ -50,6 +54,7 @@ def product_detail(request, slug):
     context = {
         'product': product,
         'related_products': related_products,
+        'related_blog_posts': related_blog_posts,
         'product_images': product_images,
     }
     return render(request, 'shop/product_detail.html', context)

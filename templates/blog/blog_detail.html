@@ -5,6 +5,44 @@
 {% block meta_description %}{{ post.meta_description|default:"EhoLux - Ugradnja i prodaja akustičnih panela" }}{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'blog:blog_detail' post.slug %}">{% endblock %}
 
+{# Open Graph Override for Blog Posts #}
+{% block og_image %}
+<meta property="og:image" content="{% if post.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ post.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
+<meta property="og:type" content="article">
+{% endblock %}
+
+{# Twitter Card Override for Blog Posts #}
+{% block twitter_image %}
+<meta name="twitter:image" content="{% if post.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ post.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
+{% endblock %}
+
+{# Article Schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{ post.title|escapejs }}",
+  "description": "{{ post.short_description|striptags|escapejs|truncatewords:50 }}",
+  {% if post.thumbnail %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ post.thumbnail.url }}",
+  {% endif %}
+  "datePublished": "{{ post.created_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|date:'c' }}",
+  "author": {
+    "@type": "Organization",
+    "name": "EhoLux"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "EhoLux",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}"
+    }
+  }
+}
+</script>
+
 {% block content %}
 <div class="blog-detail-page">
     <div class="container">
@@ -27,7 +65,7 @@
                         <article class="blog-card">
                             <a href="{% url 'blog:blog_detail' post.slug %}">
                                 {% if post.thumbnail %}
-                                    <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+                                    <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" loading="lazy">
                                 {% else %}
                                     <div class="blog-placeholder">Nema slike</div>
                                 {% endif %}

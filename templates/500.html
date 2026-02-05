@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Greška servera (500) - EhoLux{% endblock %}
+{% block meta_description %}Došlo je do greške na serveru. Molimo pokušajte ponovo kasnije ili kontaktirajte nas.{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
+
+{% block extra_css %}
+<style>
+    .error-page {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .error-content {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .error-code {
+        font-size: clamp(4rem, 10vw, 8rem);
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 20px;
+        line-height: 1;
+    }
+    
+    .error-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+    
+    .error-message {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--text-light);
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+    
+    .error-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .error-actions .btn {
+        min-width: 200px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-content">
+        <div class="error-code">500</div>
+        <h1 class="error-title">Greška servera</h1>
+        <p class="error-message">
+            Došlo je do greške na serveru. Molimo pokušajte ponovo kasnije. Ako se problem nastavi, kontaktirajte nas.
+        </p>
+        
+        <div class="error-actions">
+            <a href="{% url 'core:home' %}" class="btn btn-primary">Vrati se na početnu</a>
+            <a href="{% url 'core:contact' %}" class="btn btn-secondary">Kontaktirajte nas</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

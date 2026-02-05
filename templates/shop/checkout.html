@@ -58,9 +58,9 @@
                         <div class="checkout-item">
                             <div class="checkout-item-image">
                                 {% if item.product.thumbnail %}
-                                    <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.title }}">
+                                    <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.title }}" loading="lazy">
                                 {% elif item.product.images.first %}
-                                    <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.title }}">
+                                    <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.title }}" loading="lazy">
                                 {% endif %}
                             </div>
                             <div class="checkout-item-info">
@@ -71,7 +71,7 @@
                                 {% endif %}
                                 {% if item.pattern %}
                                     <div><strong>Dezen:</strong></div>
-                                    <img src="{{ item.pattern.image.url }}" alt="Dezen" style="max-width: 150px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <img src="{{ item.pattern.image.url }}" alt="Dezen" loading="lazy" style="max-width: 150px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
                                 {% endif %}
                                 <p class="checkout-item-price">
                                     {{ item.total|format_price }}

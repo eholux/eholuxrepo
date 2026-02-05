@@ -6,6 +6,65 @@
 {% block meta_description %}{{ product.meta_description|default:"EhoLux - Ugradnja i prodaja akustičnih panela" }}{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}">{% endblock %}
 
+{# Open Graph Override for Products #}
+{% block og_image %}
+<meta property="og:image" content="{% if product.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ product.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
+<meta property="og:type" content="product">
+{% endblock %}
+
+{# Twitter Card Override for Products #}
+{% block twitter_image %}
+<meta name="twitter:image" content="{% if product.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ product.thumbnail.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.webp' %}{% endif %}">
+{% endblock %}
+
+{# Product Schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.title|escapejs }}",
+  "description": "{{ product.short_description|striptags|escapejs|truncatewords:50 }}",
+  "sku": "{{ product.sku|escapejs }}",
+  {% if product.thumbnail %}
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ product.thumbnail.url }}",
+  {% endif %}
+  "brand": {
+    "@type": "Brand",
+    "name": "EhoLux"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}",
+    "priceCurrency": "RSD",
+    "availability": "{% if product.is_in_stock %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}"
+  }
+}
+</script>
+
+{# Breadcrumbs Schema #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Početna",
+    "item": "{{ request.scheme }}://{{ request.get_host }}/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Prodavnica",
+    "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "{{ product.title|escapejs }}",
+    "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'shop:product_detail' product.slug %}"
+  }]
+}
+</script>
+
 {% block content %}
 <div class="product-detail-page">
     <div class="container">
@@ -120,7 +179,7 @@
                                     </div>
                                     {% for pattern in product.patterns.all %}
                                         <div class="pattern-select-option" data-value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">
-                                            <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image">
+                                            <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image" loading="lazy">
                                         </div>
                                     {% endfor %}
                                 </div>
@@ -171,9 +230,9 @@
                         <div class="product-card">
                             <a href="{% url 'shop:product_detail' product.slug %}">
                                 {% if product.thumbnail %}
-                                    <img src="{{ product.thumbnail.url }}" alt="{{ product.title }}">
+                                    <img src="{{ product.thumbnail.url }}" alt="{{ product.title }}" loading="lazy">
                                 {% elif product.images.first %}
-                                    <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+                                    <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" loading="lazy">
                                 {% else %}
                                     <div class="product-placeholder">Nema slike</div>
                                 {% endif %}
@@ -181,6 +240,32 @@
                                 <p class="product-price">Izaberite opcije</p>
                             </a>
                         </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if related_blog_posts %}
+            <section class="related-blog-posts">
+                <h2>Korisni članci</h2>
+                <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+                    {% for post in related_blog_posts %}
+                        <article class="blog-card">
+                            <a href="{% url 'blog:blog_detail' post.slug %}">
+                                {% if post.thumbnail %}
+                                    <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" loading="lazy">
+                                {% else %}
+                                    <div class="blog-placeholder">Nema slike</div>
+                                {% endif %}
+                                <div class="blog-card-content">
+                                    <h3>{{ post.title }}</h3>
+                                    {% if post.short_description %}
+                                        <p>{{ post.short_description|striptags|truncatewords:20 }}</p>
+                                    {% endif %}
+                                    <span class="blog-date">{{ post.created_at|date:"d.m.Y" }}</span>
+                                </div>
+                            </a>
+                        </article>
                     {% endfor %}
                 </div>
             </section>
